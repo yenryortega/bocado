@@ -171,6 +171,33 @@ background:light-dark(rgba(255,255,255,.94),rgba(24,36,29,.94));backdrop-filter:
 @media(max-width:600px){.hero{grid-template-columns:1fr;gap:10px}.plate{max-width:230px}.stats{text-align:center}.grid{grid-template-columns:1fr}.top .date{display:none}
 .mt{grid-template-columns:1fr;justify-items:center;text-align:center;padding:8px 6px 10px}.mt svg{grid-row:auto;margin-bottom:2px}.mt .bar{width:100%}
 table{font-size:14px}td input.g{width:62px}.hide-s{display:none}}
+
+/* login: tilted tile wall + centred card */
+body.out .band,body.out .tabbar,body.out #storeNote{display:none}
+body.out main{padding:0;max-width:none}
+#authBg{position:fixed;inset:0;overflow:hidden;z-index:0;display:none;background:var(--bg)}
+body.out #authBg{display:block}
+.tiles{position:absolute;left:50%;top:50%;width:1500px;display:flex;gap:26px;transform:translate(-50%,-50%) rotate(-9deg)}
+.tcol{flex:1;display:flex;flex-direction:column;gap:26px}
+.tile{height:var(--h);border-radius:30px;background-color:var(--c);position:relative;overflow:hidden}
+.tile svg{position:absolute;width:74px;height:74px;right:22px;bottom:20px;transform:rotate(9deg);opacity:.95}
+.p-dots{background-image:radial-gradient(rgba(255,255,255,.4) 17%,transparent 18%);background-size:30px 30px}
+.p-stripes{background-image:repeating-linear-gradient(120deg,rgba(255,255,255,.2) 0 16px,transparent 16px 38px)}
+.p-rings{background-image:repeating-radial-gradient(circle at 85% 95%,rgba(255,255,255,.24) 0 12px,transparent 12px 28px)}
+.p-bubbles{background-image:radial-gradient(circle at 18% 28%,rgba(255,255,255,.35) 0 26px,transparent 27px),radial-gradient(circle at 62% 62%,rgba(255,255,255,.28) 0 16px,transparent 17px),radial-gradient(circle at 40% 85%,rgba(255,255,255,.3) 0 10px,transparent 11px)}
+:root[data-theme=dark] #authBg .tiles{filter:brightness(.55) saturate(.9)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) #authBg .tiles{filter:brightness(.55) saturate(.9)}}
+#v-auth{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:calc(env(safe-area-inset-top) + 24px) 16px calc(env(safe-area-inset-bottom) + 24px)}
+#v-auth[hidden]{display:none}
+.auth{width:100%;max-width:420px;border-radius:32px;padding:26px 26px 22px;box-shadow:0 30px 80px rgba(10,60,35,.28);margin:0}
+.ahero{display:block;width:230px;height:160px;margin:-6px auto 4px}
+.brand{display:flex;align-items:center;gap:10px;font:900 42px/1 Nunito,sans-serif;letter-spacing:-.02em;margin:0 0 8px}
+.brand svg{width:46px;height:46px;background:var(--band);border-radius:50%;padding:3px}
+.brand em{font-style:italic;color:var(--org);font-weight:800}
+.atag{color:var(--mute);font-size:16px;margin:0 0 18px;line-height:1.5}
+.auth h3{font-size:13px;font-family:Inter,sans-serif;font-weight:700;letter-spacing:.02em;color:var(--mute);margin:0 0 10px}
+.auth button.acc{width:100%;min-height:52px;font-size:17px}
+.auth .linkbtn{display:block;margin:12px auto 0}
 </style>
 </head>
 <body class="out">
@@ -220,9 +247,22 @@ table{font-size:14px}td input.g{width:62px}.hide-s{display:none}}
   </div>
 </header>
 
+<div id="authBg" aria-hidden="true"><div class="tiles" id="tiles"></div></div>
 <main class="wrap">
   <section id="v-auth" hidden>
     <div class="card auth">
+      <svg class="ahero" viewBox="0 0 240 170" aria-hidden="true">
+  <ellipse cx="122" cy="158" rx="78" ry="8" fill="rgba(20,80,50,.12)"/>
+  <circle cx="120" cy="92" r="68" fill="#fff" stroke="#e3f1e8" stroke-width="2"/>
+  <circle cx="120" cy="92" r="57" fill="none" stroke="#d6f2e2" stroke-width="9"/>
+  <circle cx="120" cy="92" r="57" fill="none" stroke="#22a565" stroke-width="9" stroke-linecap="round" stroke-dasharray="230 400" transform="rotate(-90 120 92)"/>
+  <circle cx="120" cy="92" r="47" fill="#f3faf5"/>
+  <use href="#i-p" x="76" y="58" width="48" height="48"/><use href="#i-c" x="120" y="54" width="44" height="44"/><use href="#i-f" x="99" y="96" width="42" height="42"/>
+  <use href="#i-b" x="6" y="92" width="58" height="58"/><use href="#i-s" x="182" y="98" width="50" height="50"/><use href="#i-m" x="184" y="26" width="40" height="40"/>
+  <circle cx="40" cy="40" r="5" fill="#ffc93c"/><circle cx="28" cy="62" r="3" fill="#ff7a59"/><circle cx="210" cy="80" r="3.5" fill="#22a565"/><path d="M58 22l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#ffc93c"/>
+</svg>
+<div class="brand"><svg aria-hidden="true"><use href="#i-logo"/></svg><span>Bo<em>cado</em></span></div>
+<p class="atag" data-i="authTag"></p>
       <h3 id="authTitle"></h3>
       <p class="msg" id="firstNote" hidden data-i="firstUser"></p>
       <p class="msg" id="closedNote" hidden data-i="closedNote"></p>
@@ -401,11 +441,11 @@ manage:'データ管理',clearToday:'今日の食事を削除',clearAll:'すべ�
 confDay:'今日の食事をすべて削除しますか？',confAll:'プロフィールと履歴をすべて削除しますか？元に戻せません。',confAcct:'アカウントとすべてのデータが削除されます。確認のためパスワードを入力してください。',deleted:'削除しました。',
 loadErr:'データを読み込めませんでした。接続を確認して再読み込みしてください。',days:['日','月','火','水','木','金','土']}};
 const EXTRA={
-es:{streak1:'1 día',streakN:'{n} días seguidos',streak0:'Empieza tu racha hoy',slotAdd:'Añadir a {m}',snap:'Hacer foto del plato',goal:'Objetivo',targetLbl:'meta',
+es:{authTag:'Haz una foto a tu plato y descubre sus calorías. Llega a tu meta diaria sin hacer cuentas.',streak1:'1 día',streakN:'{n} días seguidos',streak0:'Empieza tu racha hoy',slotAdd:'Añadir a {m}',snap:'Hacer foto del plato',goal:'Objetivo',targetLbl:'meta',
 savedLeft:'Guardado · te quedan {n} kcal',savedOver:'Guardado · {n} kcal por encima',tapPhoto:'Haz una foto del plato',retry:'Volver a calcular'},
-en:{streak1:'1 day',streakN:'{n}-day streak',streak0:'Start your streak today',slotAdd:'Add to {m}',snap:'Snap your dish',targetLbl:'target',
+en:{authTag:'Snap your plate and see its calories. Hit your daily target without doing the maths.',streak1:'1 day',streakN:'{n}-day streak',streak0:'Start your streak today',slotAdd:'Add to {m}',snap:'Snap your dish',targetLbl:'target',
 savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'Snap a photo of your dish',retry:'Work it out again'},
-ja:{streak1:'1日',streakN:'{n}日連続',streak0:'今日から連続記録を',slotAdd:'{m}に追加',snap:'料理を撮影',targetLbl:'目標',
+ja:{authTag:'料理を撮るだけでカロリーがわかる。計算なしで毎日の目標を達成。',streak1:'1日',streakN:'{n}日連続',streak0:'今日から連続記録を',slotAdd:'{m}に追加',snap:'料理を撮影',targetLbl:'目標',
 savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'料理を撮影',retry:'もう一度計算'}};
 Object.keys(EXTRA).forEach(k=>Object.assign(L[k],EXTRA[k]));
 const LOC={es:'es-ES',en:'en-GB',ja:'ja-JP'};
@@ -720,6 +760,23 @@ $('save').onclick=async()=>{
   finally{$('save').disabled=false}
 };
 
+
+/* ---------- login tile wall ---------- */
+(function(){
+  const C=['#9fd8b9','#f7d77a','#f4a68f','#a9c1ef','#e8c49a','#f1a7b3','#b9d98a','#8fd0c9'];
+  const PT=['p-dots','p-stripes','p-rings','p-bubbles'];
+  const IC2=['i-b','i-l','i-m','i-d','i-s','i-p','i-c','i-f'];
+  let k=0,html='';
+  for(let c=0;c<6;c++){
+    html+=`<div class="tcol" style="margin-top:${[-120,40,-60,90,-20,60][c]}px">`;
+    for(let r=0;r<6;r++){k++;
+      const ic=(k*5)%3===0?`<svg aria-hidden="true"><use href="#${IC2[k%IC2.length]}"/></svg>`:'';
+      html+=`<div class="tile ${PT[(k*3+c)%PT.length]}" style="--c:${C[(k*7+c)%C.length]};--h:${[190,250,210,280,230][(k+c)%5]}px">${ic}</div>`;
+    }
+    html+='</div>';
+  }
+  document.getElementById('tiles').innerHTML=html;
+})();
 /* ---------- boot ---------- */
 S.mtype=defaultMeal();
 S.lang=L[lsGet('lang')]?lsGet('lang'):'en';
