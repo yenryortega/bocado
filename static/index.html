@@ -11,6 +11,7 @@
 <title>Bocado · calorías</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+<script>try{var _t=localStorage.getItem('bocado:theme');if(_t&&_t!=='auto')document.documentElement.dataset.theme=_t}catch(e){}</script>
 <style>
 /* VOICE: sunny, upbeat, encouraging — a kitchen buddy you open three times a day
    IDEA: the day as a plate; meals fill it slot by slot like a lunch tray
@@ -172,6 +173,24 @@ background:light-dark(rgba(255,255,255,.94),rgba(24,36,29,.94));backdrop-filter:
 .mt{grid-template-columns:1fr;justify-items:center;text-align:center;padding:8px 6px 10px}.mt svg{grid-row:auto;margin-bottom:2px}.mt .bar{width:100%}
 table{font-size:14px}td input.g{width:62px}.hide-s{display:none}}
 
+/* add view: modes, search results, scanner, favourites */
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.modes.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.modes button{display:grid;justify-items:center;gap:4px;padding:10px 4px;min-height:70px;font-size:13px;border-radius:18px;box-shadow:var(--sh);border:0}
+.modes button svg{width:24px;height:24px}
+.modes button.on{background:var(--org);color:#fff}
+.modes button[hidden]{display:none}
+.res{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1.5px dashed var(--line)}
+.res:last-child{border:0}
+.res b{font-weight:600;font-size:15px;display:block;overflow-wrap:anywhere}
+.res small{display:block;color:var(--mute);font-size:13px;font-variant-numeric:tabular-nums}
+.fadd{width:44px;height:44px;padding:0;border-radius:50%;border:0;background:color-mix(in srgb,var(--org) 16%,var(--card));color:var(--orgd);display:grid;place-items:center;box-shadow:none}
+.fadd svg{width:20px;height:20px}
+.fadd.ok{background:var(--org);color:#fff}
+.scanbtn{display:grid;justify-items:center;text-align:center;gap:4px;border:2.5px dashed light-dark(#a8dfc0,#2c5a40);border-radius:22px;padding:24px 16px;position:relative;cursor:pointer;background:light-dark(#eaf7ef,#131d17)}
+.scanbtn svg{width:44px;height:44px;color:var(--org)}
+.scanbtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.empty2{color:var(--mute);font-size:14px;padding:8px 0}
 /* login: tilted tile wall + centred card */
 body.out .band,body.out .tabbar,body.out #storeNote{display:none}
 body.out main{padding:0;max-width:none}
@@ -224,6 +243,10 @@ body.out #authBg{display:block}
   <symbol id="u-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="u-out" viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M10 8l-4 4 4 4M6 12h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="u-chart" viewBox="0 0 24 24"><path d="M4 20h16M7.5 16v-4M12 16V8M16.5 16v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="u-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5 20.5 20.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="u-barcode" viewBox="0 0 24 24"><path d="M3 7V5a1 1 0 0 1 1-1h2M18 4h2a1 1 0 0 1 1 1v2M21 17v2a1 1 0 0 1-1 1h-2M6 20H4a1 1 0 0 1-1-1v-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 8v8M10 8v8M13.5 8v8M17 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="u-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.2 5.6.7-4.1 3.9 1 5.6L12 16.5l-5 2.7 1-5.6-4.1-3.9 5.6-.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="u-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="u-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
   <symbol id="u-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
  </g>
@@ -285,7 +308,13 @@ body.out #authBg{display:block}
   </section>
 
   <section id="v-anadir" hidden>
-    <div class="card">
+    <div class="modes" id="modes">
+      <button type="button" data-mode="photo"><svg aria-hidden="true"><use href="#u-cam"/></svg><span data-i="modePhoto"></span></button>
+      <button type="button" data-mode="search"><svg aria-hidden="true"><use href="#u-search"/></svg><span data-i="modeSearch"></span></button>
+      <button type="button" data-mode="barcode"><svg aria-hidden="true"><use href="#u-barcode"/></svg><span data-i="modeBarcode"></span></button>
+      <button type="button" data-mode="fav"><svg aria-hidden="true"><use href="#u-star"/></svg><span data-i="modeFav"></span></button>
+    </div>
+    <div class="card" id="p-photo">
       <div class="drop" id="drop"><div id="dropTxt"><div class="dpics"><svg class="" aria-hidden="true"><use href="#i-b"/></svg><svg class="" aria-hidden="true"><use href="#i-l"/></svg><svg class="" aria-hidden="true"><use href="#i-s"/></svg></div><b data-i="tapPhoto"></b><br><span class="muted" data-i="orGallery"></span></div>
         <input type="file" id="file" accept="image/*" capture="environment"></div>
       <div style="margin-top:14px"><label for="desc" data-i="descLbl"></label><textarea id="desc" rows="2"></textarea></div>
@@ -293,6 +322,21 @@ body.out #authBg{display:block}
       <p class="note" id="status"></p>
       <p class="note" id="count"></p>
       <div id="aiMsg"></div>
+    </div>
+    <div class="card" id="p-search" hidden>
+      <input id="q" type="search" autocomplete="off" enterkeyhint="search">
+      <div id="results"></div>
+      <p class="note"><span data-i="foodsNote"></span> <button class="linkbtn" id="manualBtn2" style="display:inline;margin:0" data-i="manual"></button></p>
+    </div>
+    <div class="card" id="p-barcode" hidden>
+      <label class="scanbtn"><input type="file" id="bcFile" accept="image/*" capture="environment"><svg aria-hidden="true"><use href="#u-barcode"/></svg><b data-i="scanBtn"></b><span class="muted" data-i="scanHint"></span></label>
+      <div class="row"><input id="code" inputmode="numeric" maxlength="14" style="flex:1"><button id="lookup" data-i="lookup"></button></div>
+      <p class="note" id="bcStatus"></p>
+      <p class="note">Open Food Facts</p>
+    </div>
+    <div class="card" id="p-fav" hidden>
+      <p class="sec" style="margin-top:0"><span data-i="favs"></span></p><div id="favList"></div>
+      <p class="sec"><span data-i="recents"></span></p><div id="recList"></div>
     </div>
     <div class="card" id="resCard" hidden>
       <div class="rh"><img id="resImg" alt="" hidden><h3 id="resTitle" style="margin:0"></h3><span class="tk" id="tot">0</span></div>
@@ -305,6 +349,8 @@ body.out #authBg{display:block}
       <p class="sec" style="margin:18px 0 8px"><span data-i="meal"></span></p>
       <div class="chips" id="mchips"></div>
       <div class="row"><button class="acc" id="save" style="flex:1" data-i="saveToday"></button></div>
+      <div class="row"><button class="x" id="favBtn" style="display:inline-flex;align-items:center;gap:6px"><svg style="width:18px;height:18px" aria-hidden="true"><use href="#u-star"/></svg><span data-i="saveFav"></span></button></div>
+      <div class="row" id="favForm" hidden><input id="favName" maxlength="80" style="flex:1"><button class="x" id="favSave" data-i="favSaveBtn"></button></div>
       <p class="note" id="aiNote"></p>
     </div>
   </section>
@@ -317,6 +363,8 @@ body.out #authBg{display:block}
     </div>
     <p class="sec"><svg class="ic" aria-hidden="true"><use href="#u-globe"/></svg><span data-i="language"></span></p>
     <div class="card"><div class="seg langSeg"><button data-l="en">English</button><button data-l="es">Español</button><button data-l="ja">日本語</button></div></div>
+    <p class="sec"><svg class="ic" aria-hidden="true"><use href="#u-sun"/></svg><span data-i="theme"></span></p>
+    <div class="card"><div class="seg" id="themeSeg"><button data-th="auto" data-i="thAuto"></button><button data-th="light" data-i="thLight"></button><button data-th="dark" data-i="thDark"></button></div></div>
     <p class="sec"><svg class="ic" aria-hidden="true"><use href="#u-scale"/></svg><span data-i="yourData"></span></p>
     <div class="card">
       <div class="grid">
@@ -448,6 +496,9 @@ savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'
 ja:{authTag:'料理を撮るだけでカロリーがわかる。計算なしで毎日の目標を達成。',streak1:'1日',streakN:'{n}日連続',streak0:'今日から連続記録を',slotAdd:'{m}に追加',snap:'料理を撮影',targetLbl:'目標',
 savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'料理を撮影',retry:'もう一度計算'}};
 Object.keys(EXTRA).forEach(k=>Object.assign(L[k],EXTRA[k]));
+const EXTRA2={"en": {"modePhoto": "Photo", "modeSearch": "Search", "modeBarcode": "Barcode", "modeFav": "Favorites", "searchPh": "Rice, chicken, banana…", "searchEmpty": "No matches. Add it by hand.", "foodsNote": "Approximate values from standard food tables.", "addTo": "Add", "scanBtn": "Scan a barcode", "scanHint": "Take a clear photo of the barcode on the package.", "codePh": "Or type the number", "lookup": "Look up", "scanning": "Reading barcode…", "noCode": "Couldn't read the barcode. Try a sharper photo or type the number.", "favs": "Favorites", "recents": "Recent", "noFavs": "Save a meal as a favorite to add it in one tap.", "noRecents": "Your recent meals will show up here.", "saveFav": "Save as favorite", "favName": "Favorite name", "favSaveBtn": "Save", "favSaved": "Saved to favorites", "added": "Added: {n}", "myMeal": "Your meal", "theme": "Theme", "thAuto": "Auto", "thLight": "Light", "thDark": "Dark"}, "es": {"modePhoto": "Foto", "modeSearch": "Buscar", "modeBarcode": "Código", "modeFav": "Favoritos", "searchPh": "Arroz, pollo, plátano…", "searchEmpty": "Sin resultados. Añádelo a mano.", "foodsNote": "Valores aproximados de tablas de composición.", "addTo": "Añadir", "scanBtn": "Escanear código de barras", "scanHint": "Haz una foto nítida del código del envase.", "codePh": "O escribe el número", "lookup": "Buscar", "scanning": "Leyendo código…", "noCode": "No pude leer el código. Prueba con otra foto o escribe el número.", "favs": "Favoritos", "recents": "Recientes", "noFavs": "Guarda una comida como favorita para añadirla con un toque.", "noRecents": "Aquí aparecerán tus comidas recientes.", "saveFav": "Guardar como favorito", "favName": "Nombre del favorito", "favSaveBtn": "Guardar", "favSaved": "Guardado en favoritos", "added": "Añadido: {n}", "myMeal": "Tu comida", "theme": "Tema", "thAuto": "Automático", "thLight": "Claro", "thDark": "Oscuro"}, "ja": {"modePhoto": "写真", "modeSearch": "検索", "modeBarcode": "バーコード", "modeFav": "お気に入り", "searchPh": "ごはん、鶏肉、バナナ…", "searchEmpty": "見つかりません。手動で追加してください。", "foodsNote": "食品成分表に基づくおおよその値です。", "addTo": "追加", "scanBtn": "バーコードを読み取る", "scanHint": "パッケージのバーコードをはっきり撮影してください。", "codePh": "または番号を入力", "lookup": "検索", "scanning": "読み取り中…", "noCode": "バーコードを読み取れませんでした。別の写真を試すか番号を入力してください。", "favs": "お気に入り", "recents": "最近", "noFavs": "食事をお気に入りに保存すると、ワンタップで追加できます。", "noRecents": "最近の食事がここに表示されます。", "saveFav": "お気に入りに保存", "favName": "お気に入りの名前", "favSaveBtn": "保存", "favSaved": "お気に入りに保存しました", "added": "追加しました：{n}", "myMeal": "あなたの食事", "theme": "テーマ", "thAuto": "自動", "thLight": "ライト", "thDark": "ダーク"}};
+const ERRX={"en": {"not_found": "Product not found in Open Food Facts.", "no_nutrition": "That product has no calorie data.", "lookup_failed": "Couldn't reach Open Food Facts. Try again.", "bad_code": "Enter a valid barcode number.", "ai_off": "Photo analysis is not set up.", "bad_fav": "Add at least one food first.", "too_many_favs": "You have too many favorites. Delete some first."}, "es": {"not_found": "Producto no encontrado en Open Food Facts.", "no_nutrition": "Ese producto no tiene datos de calorías.", "lookup_failed": "No pude conectar con Open Food Facts. Inténtalo de nuevo.", "bad_code": "Escribe un código de barras válido.", "ai_off": "El análisis de fotos no está configurado.", "bad_fav": "Añade al menos un alimento primero.", "too_many_favs": "Tienes demasiados favoritos. Borra alguno."}, "ja": {"not_found": "Open Food Factsに商品が見つかりません。", "no_nutrition": "この商品にはカロリー情報がありません。", "lookup_failed": "Open Food Factsに接続できません。もう一度お試しください。", "bad_code": "正しいバーコード番号を入力してください。", "ai_off": "写真分析は設定されていません。", "bad_fav": "まず食品を1つ以上追加してください。", "too_many_favs": "お気に入りが多すぎます。いくつか削除してください。"}};
+Object.keys(EXTRA2).forEach(k=>{Object.assign(L[k],EXTRA2[k]);L[k].err=Object.assign({},L[k].err,ERRX[k])});
 const LOC={es:'es-ES',en:'en-GB',ja:'ja-JP'};
 const MEALK=['b','l','m','d','s'];
 const MCOL={b:'#ffc93c',l:'#ff6b2c',m:'#e9a65a',d:'#5b8def',s:'#f2546b'};
@@ -498,7 +549,8 @@ function applyLang(){
   document.documentElement.lang=S.lang;
   document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));
   document.querySelectorAll('.langSeg button').forEach(b=>b.classList.toggle('on',b.dataset.l===S.lang));
-  $('desc').placeholder=t('descPh');
+  $('desc').placeholder=t('descPh');$('q').placeholder=t('searchPh');$('code').placeholder=t('codePh');$('favName').placeholder=t('favName');
+  renderTheme();if(S.mode2==='search')renderResults();if(S.mode2==='fav'&&S.favs)renderFavs();
   $('fabLbl').setAttribute('aria-label',t('snap'));
   $('today').textContent=new Date().toLocaleDateString(LOC[S.lang],{weekday:'long',day:'numeric',month:'long'});
   const av=$('act').value,ov=$('obj').value;
@@ -558,6 +610,7 @@ function renderWeek(){
 }
 function renderCount(){
   if(!S.me)return;
+  $('count').hidden=!S.me.ai;
   $('count').textContent=S.me.photo_limit==null?t('photosAdmin',{u:S.me.photos_today}):t('photosUsed',{u:S.me.photos_today,l:S.me.photo_limit});
 }
 function renderChips(){$('mchips').innerHTML=MEALK.map((k,i)=>`<button type="button" data-m="${k}" style="--c:${MCOL[k]}" class="${k===S.mtype?'on':''}">${IC('i-'+k)}${esc(T().meals[i])}</button>`).join('')}
@@ -608,6 +661,7 @@ function route(){
   const h=location.hash.slice(1), v=VIEWS.includes(h)?h:(profile()?'hoy':'ajustes');
   VIEWS.forEach(x=>$('v-'+x).hidden=x!==v);
   document.body.classList.toggle('compact',v!=='hoy');
+  if(v==='anadir'&&!S.mode2)setMode(S.me?.ai?'photo':'search');
   document.querySelectorAll('.tabbar a').forEach(a=>{if(a.dataset.t===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   scrollTo(0,0);
 }
@@ -620,6 +674,9 @@ async function showAuth(){
 }
 async function enter(me){
   S.me=me;document.body.classList.remove('out');
+  const ai=!!me.ai;
+  $('modes').querySelector('[data-mode=photo]').hidden=!ai;$('modes').classList.toggle('n3',!ai);
+  $('fabFile').hidden=!ai;$('fabLbl').querySelector('use').setAttribute('href',ai?'#u-cam':'#u-plus');
   if(me.lang&&L[me.lang]&&me.lang!==S.lang){S.lang=me.lang;lsSet('lang',S.lang)}
   applyLang();renderProfile();route();
   await loadDays();
@@ -676,7 +733,7 @@ $('confYes').onclick=async()=>{
 /* ---------- photo + analysis ---------- */
 function defaultMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;return h<10.5?'b':h<15.5?'l':h<18?'m':'d'}
 function resetAdd(){
-  S.draft=[];S.file=null;S.thumb=null;$('resCard').hidden=true;$('desc').value='';$('file').value='';$('fabFile').value='';
+  S.draft=[];S.file=null;S.thumb=null;$('resCard').hidden=true;$('favForm').hidden=true;$('q').value='';$('bcStatus').textContent='';$('code').value='';$('desc').value='';$('file').value='';$('fabFile').value='';
   $('drop').querySelector('img')?.remove();$('dropTxt').hidden=false;$('aiMsg').innerHTML='';$('status').textContent='';
 }
 function setPhoto(f){
@@ -688,12 +745,12 @@ function setPhoto(f){
 $('file').onchange=e=>{const f=e.target.files[0];if(f)setPhoto(f)};
 $('fabFile').onchange=e=>{
   const f=e.target.files[0];if(!f)return;
-  resetAdd();S.mtype=defaultMeal();renderChips();setPhoto(f);
+  resetAdd();S.mtype=defaultMeal();renderChips();setMode('photo');setPhoto(f);
   location.hash='anadir';analyze();
 };
 $('slots').addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.slot){resetAdd();S.mtype=b.dataset.slot;renderChips();location.hash='anadir';return}
+  if(b.dataset.slot){openAdd(b.dataset.slot);return}
   if(b.dataset.del){
     const id=b.dataset.del;
     try{await api('/api/meals/'+id,{method:'DELETE'});S.day.meals=S.day.meals.filter(m=>String(m.id)!==id);renderAll()}catch{}
@@ -728,7 +785,118 @@ async function analyze(){
 }
 $('analyze').onclick=analyze;
 $('cancel').onclick=()=>S.ctl?.abort();
-$('manualBtn').onclick=()=>showDraft([{n:'',g:100,k:0,p:0,c:0,f:0}],t('result'));
+$('manualBtn').onclick=$('manualBtn2').onclick=()=>addItems([{n:'',g:100,k:0,p:0,c:0,f:0}]);
+
+
+/* ---------- add view: modes ---------- */
+function setMode(m){
+  if(m==='photo'&&!S.me?.ai)m='search';
+  S.mode2=m;
+  ['photo','search','barcode','fav'].forEach(x=>$('p-'+x).hidden=x!==m);
+  $('modes').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
+  if(m==='search'){loadFoods().then(renderResults)}
+  if(m==='fav')loadFavs();
+}
+$('modes').onclick=e=>{const b=e.target.closest('button');if(b)setMode(b.dataset.mode)};
+function openAdd(slot,mode){
+  resetAdd();S.mtype=slot||defaultMeal();renderChips();setMode(mode||(S.me?.ai?'photo':'search'));location.hash='anadir';
+}
+$('fabLbl').addEventListener('click',e=>{if(!S.me?.ai){e.preventDefault();openAdd(defaultMeal(),'search')}});
+function addItems(items,title){
+  if($('resCard').hidden||!S.draft.length){showDraft(items.map(i=>({...i})),title||t('myMeal'));return}
+  S.draft.push(...items.map(i=>({...i})));renderDraft();
+}
+
+/* ---------- search ---------- */
+let FOODS=null;
+const norm=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+async function loadFoods(){if(FOODS)return FOODS;try{FOODS=await (await fetch('/static/foods.json')).json()}catch{FOODS=[]}return FOODS}
+const fname=f=>f[S.lang]||f.en;
+function renderResults(){
+  if(!FOODS)return;
+  const q=norm($('q').value.trim());
+  let list=FOODS;
+  if(q){list=FOODS.filter(f=>norm(f.en+' '+f.es+' '+f.ja).includes(q));
+    list.sort((a,b)=>(norm(fname(b)).startsWith(q)?1:0)-(norm(fname(a)).startsWith(q)?1:0))}
+  list=list.slice(0,q?20:12);
+  $('results').innerHTML=list.length?list.map(f=>`<div class="res"><div><b>${esc(fname(f))}</b><small>${r0(f.k)} kcal/100 g · ${f.g} g = ${r0(f.k*f.g/100)} kcal</small></div><span></span>
+    <button class="fadd" data-food="${FOODS.indexOf(f)}" aria-label="${esc(t('addTo'))}: ${esc(fname(f))}">${IC('u-plus')}</button></div>`).join('')
+    :`<p class="empty2">${esc(t('searchEmpty'))}</p>`;
+}
+$('q').addEventListener('input',renderResults);
+$('results').onclick=e=>{
+  const b=e.target.closest('button[data-food]');if(!b)return;
+  const f=FOODS[+b.dataset.food];
+  addItems([{n:fname(f),g:f.g,k:f.k,p:f.p,c:f.c,f:f.f}]);
+  b.classList.add('ok');setTimeout(()=>b.classList.remove('ok'),700);toast(t('added',{n:fname(f)}));
+};
+
+/* ---------- barcode ---------- */
+let zxingP=null;
+function loadZXing(){
+  if(window.ZXing)return Promise.resolve(window.ZXing);
+  return zxingP||(zxingP=new Promise((ok,no)=>{const sc=document.createElement('script');
+    sc.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';sc.onload=()=>ok(window.ZXing);sc.onerror=no;document.head.appendChild(sc)}));
+}
+async function decodeBarcode(file){
+  if('BarcodeDetector' in window){
+    try{const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+      const r=await det.detect(await createImageBitmap(file));if(r[0]?.rawValue)return r[0].rawValue}catch{}
+  }
+  const Z=await loadZXing();const url=URL.createObjectURL(file);
+  try{const r=await new Z.BrowserMultiFormatReader().decodeFromImageUrl(url);return r.getText()}finally{URL.revokeObjectURL(url)}
+}
+async function lookupCode(code){
+  code=String(code||'').replace(/\D/g,'');
+  if(code.length<6){$('bcStatus').textContent=tErr('bad_code');return}
+  $('code').value=code;$('bcStatus').innerHTML=`<span class="spin"></span>${esc(t('scanning'))}`;
+  try{const it=await api(`/api/barcode/${code}?lang=${S.lang}`);$('bcStatus').textContent='';addItems([it],it.n)}
+  catch(e){if(e.code!=='auth')$('bcStatus').textContent=tErr(e.code)}
+}
+$('bcFile').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  $('bcStatus').innerHTML=`<span class="spin"></span>${esc(t('scanning'))}`;
+  let code=null;try{code=await decodeBarcode(f)}catch{}
+  if(!code){$('bcStatus').textContent=t('noCode');return}
+  lookupCode(code);
+};
+$('lookup').onclick=()=>lookupCode($('code').value);
+$('code').addEventListener('keydown',e=>{if(e.key==='Enter')lookupCode($('code').value)});
+
+/* ---------- favourites & recents ---------- */
+async function loadFavs(){
+  try{const [f,r]=await Promise.all([api('/api/favorites'),api('/api/recents')]);S.favs=f;S.recs=r;renderFavs()}catch{}
+}
+const itemsK=items=>items.reduce((a,i)=>a+itemK(i),0);
+function renderFavs(){
+  $('favList').innerHTML=S.favs.length?S.favs.map((f,i)=>`<div class="res"><div><b>${esc(f.name)}</b><small>${fmt(itemsK(f.items))} kcal · ${f.items.length}×</small></div>
+    <button class="del" data-fdel="${f.id}" aria-label="${esc(t('del'))}">${IC('u-x')}</button><button class="fadd" data-fadd="${i}" aria-label="${esc(t('addTo'))}">${IC('u-plus')}</button></div>`).join('')
+    :`<p class="empty2">${esc(t('noFavs'))}</p>`;
+  $('recList').innerHTML=S.recs.length?S.recs.map((r,i)=>`<div class="res"><div><b>${esc(r.name)}</b><small>${esc(mealName(r.tipo))} · ${fmt(itemsK(r.items))} kcal</small></div><span></span>
+    <button class="fadd" data-radd="${i}" aria-label="${esc(t('addTo'))}">${IC('u-plus')}</button></div>`).join('')
+    :`<p class="empty2">${esc(t('noRecents'))}</p>`;
+}
+$('p-fav').onclick=async e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.fadd!=null){const f=S.favs[+b.dataset.fadd];addItems(f.items,f.name)}
+  else if(b.dataset.radd!=null){const r=S.recs[+b.dataset.radd];addItems(r.items,r.name)}
+  else if(b.dataset.fdel){try{await api('/api/favorites/'+b.dataset.fdel,{method:'DELETE'});S.favs=S.favs.filter(f=>String(f.id)!==b.dataset.fdel);renderFavs()}catch{}}
+};
+$('favBtn').onclick=()=>{$('favForm').hidden=false;$('favName').value=$('resTitle').textContent.slice(0,80);$('favName').focus()};
+$('favSave').onclick=async()=>{
+  const items=S.draft.filter(i=>String(i.n).trim()&&i.g>0),name=$('favName').value.trim();
+  if(!items.length||!name){$('aiNote').textContent=tErr('bad_fav');return}
+  try{await api('/api/favorites',{method:'POST',body:{name,items}});$('favForm').hidden=true;toast(t('favSaved'));S.favs=null}
+  catch(e){$('aiNote').textContent=tErr(e.code)}
+};
+
+/* ---------- theme ---------- */
+function renderTheme(){const th=lsGet('theme')||'auto';document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.th===th))}
+document.querySelectorAll('#themeSeg button').forEach(b=>b.onclick=()=>{
+  const th=b.dataset.th;lsSet('theme',th);
+  if(th==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=th;
+  renderTheme();
+});
 
 function showDraft(items,title){
   S.draft=items;$('resTitle').textContent=title;$('aiNote').textContent='';$('resImg').hidden=!S.file;

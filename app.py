@@ -6,6 +6,7 @@ import json
 import os
 import re
 import time
+import urllib.request
 from functools import wraps
 from zoneinfo import ZoneInfo
 
@@ -78,6 +79,18 @@ class Meal(db.Model):
                 "items": self.items, "thumb": self.thumb}
 
 
+class Favorite(db.Model):
+    __tablename__ = "favorites"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    name = db.Column(db.String(80), nullable=False)
+    items = db.Column(db.JSON, nullable=False)
+    created = db.Column(db.DateTime, default=dt.datetime.utcnow)
+
+    def out(self):
+        return {"id": self.id, "name": self.name, "items": self.items}
+
+
 class Analysis(db.Model):
     __tablename__ = "analyses"
     id = db.Column(db.Integer, primary_key=True)
@@ -129,8 +142,12 @@ def photos_today(u):
     return Analysis.query.filter_by(user_id=u.id, day=today()).count()
 
 
+def ai_enabled():
+    return bool(os.environ.get("ANTHROPIC_API_KEY", "").strip())
+
+
 def me_json(u):
-    return {
+    return {"ai": ai_enabled(),
         "email": u.email, "name": u.name, "lang": u.lang, "profile": u.profile,
         "is_admin": u.is_admin, "photos_today": photos_today(u),
         "photo_limit": None if u.is_admin else DAILY_PHOTO_LIMIT,
@@ -198,7 +215,7 @@ def health():
 @app.get("/api/config")
 def config():
     first = User.query.count() == 0
-    return jsonify({"signup_open": first or bool(SIGNUP_CODE), "needs_code": not first and bool(SIGNUP_CODE)})
+    return jsonify({"signup_open": first or bool(SIGNUP_CODE), "needs_code": not first and bool(SIGNUP_CODE), "ai": ai_enabled()})
 
 
 @app.post("/api/register")
@@ -296,6 +313,7 @@ def change_password(u):
 @login_required
 def delete_data(u):
     Meal.query.filter_by(user_id=u.id).delete()
+    Favorite.query.filter_by(user_id=u.id).delete()
     u.profile = None
     db.session.commit()
     return jsonify(me_json(u))
@@ -308,6 +326,7 @@ def delete_account(u):
     if not check_password_hash(u.pw, str(d.get("password", ""))):
         return err("wrong_pw", 403)
     Meal.query.filter_by(user_id=u.id).delete()
+    Favorite.query.filter_by(user_id=u.id).delete()
     Analysis.query.filter_by(user_id=u.id).delete()
     db.session.delete(u)
     db.session.commit()
@@ -382,6 +401,90 @@ def clear_day(u, day):
     return jsonify({"ok": True})
 
 
+# ---------------------------------------------------------------- favorites, recents, barcode
+@app.get("/api/favorites")
+@login_required
+def favorites(u):
+    rows = Favorite.query.filter_by(user_id=u.id).order_by(Favorite.created.desc()).limit(100).all()
+    return jsonify([f.out() for f in rows])
+
+
+@app.post("/api/favorites")
+@login_required
+def add_favorite(u):
+    d = request.get_json(silent=True) or {}
+    items = clean_items(d.get("items"))
+    name = str(d.get("name", "")).strip()[:80]
+    if not items or not name:
+        return err("bad_fav")
+    if Favorite.query.filter_by(user_id=u.id).count() >= 100:
+        return err("too_many_favs")
+    f = Favorite(user_id=u.id, name=name, items=items)
+    db.session.add(f)
+    db.session.commit()
+    return jsonify(f.out())
+
+
+@app.delete("/api/favorites/<int:fid>")
+@login_required
+def delete_favorite(u, fid):
+    Favorite.query.filter_by(id=fid, user_id=u.id).delete()
+    db.session.commit()
+    return jsonify({"ok": True})
+
+
+@app.get("/api/recents")
+@login_required
+def recents(u):
+    rows = Meal.query.filter_by(user_id=u.id).order_by(Meal.day.desc(), Meal.id.desc()).limit(60).all()
+    seen, out = set(), []
+    for m in rows:
+        key = "|".join(sorted(i.get("n", "").lower() for i in m.items))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"name": ", ".join(i.get("n", "") for i in m.items)[:80], "items": m.items, "tipo": m.tipo})
+        if len(out) >= 10:
+            break
+    return jsonify(out)
+
+
+@app.get("/api/barcode/<code>")
+@login_required
+def barcode(u, code):
+    if not re.fullmatch(r"\d{6,14}", code):
+        return err("bad_code")
+    url = (f"https://world.openfoodfacts.org/api/v2/product/{code}.json"
+           "?fields=product_name,product_name_ja,product_name_es,product_name_en,brands,nutriments,serving_quantity")
+    req = urllib.request.Request(url, headers={"User-Agent": "Bocado/1.0 (calorie tracker; contact via app owner)"})
+    try:
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read().decode())
+    except Exception as e:
+        app.logger.warning("OFF lookup failed: %s", e)
+        return err("lookup_failed", 502)
+    p = data.get("product") if data.get("status") == 1 else None
+    if not p:
+        return err("not_found", 404)
+    n = p.get("nutriments") or {}
+    kcal = n.get("energy-kcal_100g")
+    if kcal is None and n.get("energy_100g") is not None:
+        kcal = float(n["energy_100g"]) / 4.184
+    if kcal is None:
+        return err("no_nutrition", 404)
+    lang = request.args.get("lang", u.lang)
+    name = p.get(f"product_name_{lang}") or p.get("product_name") or p.get("product_name_en") or code
+    if p.get("brands"):
+        name = f"{name} ({p['brands'].split(',')[0].strip()})"
+    try:
+        serving = float(p.get("serving_quantity") or 0)
+    except (TypeError, ValueError):
+        serving = 0
+    return jsonify({"n": name[:60], "g": round(serving) if 0 < serving < 2000 else 100, "k": round(num(kcal, 0, 1000), 1),
+                    "p": round(num(n.get("proteins_100g"), 0, 100), 1), "c": round(num(n.get("carbohydrates_100g"), 0, 100), 1),
+                    "f": round(num(n.get("fat_100g"), 0, 100), 1)})
+
+
 # ---------------------------------------------------------------- photo analysis
 LANG_NAMES = {"es": "Spanish", "en": "English", "ja": "Japanese"}
 
@@ -422,6 +525,8 @@ def prep_image(f):
 @app.post("/api/analyze")
 @login_required
 def analyze(u):
+    if not ai_enabled():
+        return err("ai_off", 503)
     if not u.is_admin and photos_today(u) >= DAILY_PHOTO_LIMIT:
         return err("limit", 429)
     desc = str(request.form.get("desc", "")).strip()
