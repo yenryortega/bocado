@@ -382,6 +382,26 @@ def streak(u):
     return jsonify({"streak": n, "today": today() in days})
 
 
+@app.put("/api/meals/<int:mid>")
+@login_required
+def update_meal(u, mid):
+    m = Meal.query.filter_by(id=mid, user_id=u.id).first()
+    if not m:
+        return err("not_found", 404)
+    d = request.get_json(silent=True) or {}
+    if "items" in d:
+        items = clean_items(d.get("items"))
+        if not items:
+            return err("bad_meal")
+        m.items = items
+    if "tipo" in d:
+        tipo = str(d.get("tipo", ""))[:12]
+        if tipo:
+            m.tipo = tipo
+    db.session.commit()
+    return jsonify(m.out())
+
+
 @app.delete("/api/meals/<int:mid>")
 @login_required
 def delete_meal(u, mid):
