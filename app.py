@@ -206,6 +206,18 @@ def index():
     return send_from_directory(app.static_folder, "index.html")
 
 
+@app.get("/apple-touch-icon.png")
+@app.get("/apple-touch-icon-precomposed.png")
+@app.get("/apple-touch-icon-180x180.png")
+def touch_icon():
+    return send_from_directory(app.static_folder, "icon-180.png", max_age=86400)
+
+
+@app.get("/favicon.ico")
+def favicon():
+    return send_from_directory(app.static_folder, "icon-192.png", mimetype="image/png", max_age=86400)
+
+
 @app.get("/healthz")
 def health():
     return "ok"
