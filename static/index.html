@@ -235,6 +235,13 @@ table{font-size:14px}td input.g,td input.kt{width:62px}.hide-s{display:none}}
 .sact button{flex:1;min-width:140px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .sact button[hidden]{display:none}
 .sact svg{width:18px;height:18px}
+/* share */
+.shlink{display:flex;gap:8px;align-items:center}
+.shlink input{flex:1;font-weight:600;color:var(--orgd)}
+.code{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--bg);border-radius:14px;padding:10px 12px;margin-top:12px}
+.code b{font:800 18px Nunito,monospace;letter-spacing:.04em}
+.qr{display:grid;justify-items:center;gap:6px;margin-top:14px}
+.qr canvas,.qr img{width:180px;height:180px;image-rendering:pixelated;background:#fff;padding:10px;border-radius:16px}
 /* login: tilted tile wall + centred card */
 body.out .band,body.out .tabbar,body.out #storeNote{display:none}
 body.out main{padding:0;max-width:none}
@@ -292,6 +299,7 @@ body.out #authBg{display:block}
   <symbol id="u-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.2 5.6.7-4.1 3.9 1 5.6L12 16.5l-5 2.7 1-5.6-4.1-3.9 5.6-.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   <symbol id="u-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="u-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="u-share" viewBox="0 0 24 24"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v6.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="u-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
   <symbol id="u-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
  </g>
@@ -409,6 +417,15 @@ body.out #authBg{display:block}
       <div class="acct"><div class="av" id="av">?</div><div><b id="acctName"></b><br><span class="muted" id="acctEmail"></span><br><span class="pill" id="acctPill"></span></div></div>
       <p class="note" id="shareTxt" data-i="shareTxt" hidden></p>
       <div class="row"><button id="logout" class="danger" style="color:var(--ink)"><svg class="ic" aria-hidden="true"><use href="#u-out"/></svg><span data-i="logout"></span></button></div>
+    </div>
+    <p class="sec"><svg class="ic" aria-hidden="true"><use href="#u-share"/></svg><span data-i="share"></span></p>
+    <div class="card" id="shareCard">
+      <p class="muted" id="shareDesc" style="margin:0 0 10px"></p>
+      <div class="shlink"><input id="shUrl" readonly aria-label="Link"><button class="x" id="copyLink" data-i="copyLink"></button></div>
+      <div class="code" id="codeBox" hidden><div><span class="muted" data-i="code"></span><br><b id="codeVal"></b></div><button class="x" id="copyCode" data-i="copyLink"></button></div>
+      <p class="msg" id="noInvite" hidden data-i="noInvite"></p>
+      <div class="row"><button class="acc" id="shareBtn" style="flex:1" data-i="shareBtn"></button><button id="copyMsg" style="flex:1" data-i="copyMsg"></button></div>
+      <div class="qr" id="qrBox" hidden><div id="qr"></div><span class="muted" data-i="qrHint"></span></div>
     </div>
     <p class="sec"><svg class="ic" aria-hidden="true"><use href="#u-globe"/></svg><span data-i="language"></span></p>
     <div class="card"><div class="seg langSeg"><button data-l="en">English</button><button data-l="es">Español</button><button data-l="ja">日本語</button></div></div>
@@ -568,6 +585,8 @@ const EXTRA2={"en": {"modePhoto": "Photo", "modeSearch": "Search", "modeBarcode"
 const ERRX={"en": {"not_found": "Product not found in Open Food Facts.", "no_nutrition": "That product has no calorie data.", "lookup_failed": "Couldn't reach Open Food Facts. Try again.", "bad_code": "Enter a valid barcode number.", "ai_off": "Photo analysis is not set up.", "bad_fav": "Add at least one food first.", "too_many_favs": "You have too many favorites. Delete some first."}, "es": {"not_found": "Producto no encontrado en Open Food Facts.", "no_nutrition": "Ese producto no tiene datos de calorías.", "lookup_failed": "No pude conectar con Open Food Facts. Inténtalo de nuevo.", "bad_code": "Escribe un código de barras válido.", "ai_off": "El análisis de fotos no está configurado.", "bad_fav": "Añade al menos un alimento primero.", "too_many_favs": "Tienes demasiados favoritos. Borra alguno."}, "ja": {"not_found": "Open Food Factsに商品が見つかりません。", "no_nutrition": "この商品にはカロリー情報がありません。", "lookup_failed": "Open Food Factsに接続できません。もう一度お試しください。", "bad_code": "正しいバーコード番号を入力してください。", "ai_off": "写真分析は設定されていません。", "bad_fav": "まず食品を1つ以上追加してください。", "too_many_favs": "お気に入りが多すぎます。いくつか削除してください。"}};
 const EXTRA4={"en": {"addHand": "+ Add by hand", "searchAdd": "Search a food to add…"}, "es": {"addHand": "+ Añadir a mano", "searchAdd": "Busca un alimento para añadir…"}, "ja": {"addHand": "+ 手動で追加", "searchAdd": "追加する食品を検索…"}};
 Object.keys(EXTRA4).forEach(k=>Object.assign(L[k],EXTRA4[k]));
+const EXTRA5={"en": {"share": "Share", "shareDescA": "Send the link and the invite code to a friend. Everyone only sees their own data.", "shareDescU": "Send the link to a friend. They'll need an invite code from the app owner to sign up.", "noInvite": "Sign-up is closed. Set SIGNUP_CODE in Railway to invite friends.", "shareBtn": "Share…", "copyMsg": "Copy message", "copyLink": "Copy", "copied": "Copied", "qrHint": "Or let them scan this code with their camera", "shareMsgA": "Hi! Try Bocado, my calorie app: {u}\n1. Tap “No account? Create one” and sign up.\n2. Invite code: {c}\n3. In Settings → Your details, add your age, weight, height and goal.\nTip: on iPhone, open it in Safari → Share → Add to Home Screen.", "shareMsgU": "Hi! Try Bocado, a calorie app: {u}\nAsk me for the invite code to sign up.\nTip: on iPhone, open it in Safari → Share → Add to Home Screen."}, "es": {"share": "Compartir", "shareDescA": "Manda el enlace y el código de invitación a un amigo. Cada persona solo ve sus propios datos.", "shareDescU": "Manda el enlace a un amigo. Para registrarse necesitará un código de invitación del dueño de la app.", "noInvite": "El registro está cerrado. Pon SIGNUP_CODE en Railway para invitar a amigos.", "shareBtn": "Compartir…", "copyMsg": "Copiar mensaje", "copyLink": "Copiar", "copied": "Copiado", "qrHint": "O que escanee este código con la cámara", "shareMsgA": "¡Hola! Prueba Bocado, mi app de calorías: {u}\n1. Toca “No account? Create one” y regístrate.\n2. Código de invitación: {c}\n3. En Settings → Your details pon tu edad, peso, estatura y objetivo.\nConsejo: en iPhone, ábrela en Safari → Compartir → Añadir a pantalla de inicio.", "shareMsgU": "¡Hola! Prueba Bocado, una app de calorías: {u}\nPídeme el código de invitación para registrarte.\nConsejo: en iPhone, ábrela en Safari → Compartir → Añadir a pantalla de inicio."}, "ja": {"share": "共有", "shareDescA": "リンクと招待コードを友だちに送りましょう。各自のデータは本人しか見られません。", "shareDescU": "リンクを友だちに送りましょう。登録にはアプリ管理者の招待コードが必要です。", "noInvite": "登録は締め切られています。友だちを招待するにはRailwayでSIGNUP_CODEを設定してください。", "shareBtn": "共有…", "copyMsg": "メッセージをコピー", "copyLink": "コピー", "copied": "コピーしました", "qrHint": "またはカメラでこのコードを読み取ってもらう", "shareMsgA": "こんにちは！カロリー管理アプリBocadoを使ってみて：{u}\n1.「No account? Create one」から登録\n2. 招待コード：{c}\n3. Settings → Your details に年齢・体重・身長・目標を入力\nヒント：iPhoneはSafariで開いて 共有 → ホーム画面に追加", "shareMsgU": "こんにちは！カロリー管理アプリBocadoを使ってみて：{u}\n登録用の招待コードは私に聞いてね。\nヒント：iPhoneはSafariで開いて 共有 → ホーム画面に追加"}};
+Object.keys(EXTRA5).forEach(k=>Object.assign(L[k],EXTRA5[k]));
 const EXTRA3={"en": {"foods": "Foods", "saveChanges": "Save changes", "delMeal": "Delete meal", "close": "Close", "updated": "Meal updated", "details": "Details", "confDel": "Delete this meal?"}, "es": {"foods": "Alimentos", "saveChanges": "Guardar cambios", "delMeal": "Borrar comida", "close": "Cerrar", "updated": "Comida actualizada", "details": "Detalles", "confDel": "¿Borrar esta comida?"}, "ja": {"foods": "食品", "saveChanges": "変更を保存", "delMeal": "食事を削除", "close": "閉じる", "updated": "更新しました", "details": "詳細", "confDel": "この食事を削除しますか？"}};
 Object.keys(EXTRA3).forEach(k=>Object.assign(L[k],EXTRA3[k]));
 Object.keys(EXTRA2).forEach(k=>{Object.assign(L[k],EXTRA2[k]);L[k].err=Object.assign({},L[k].err,ERRX[k])});
@@ -708,6 +727,7 @@ function renderFormula(){
 }
 function renderAcct(){
   if(!S.me)return;
+  renderShare();
   $('av').textContent=(S.me.name||S.me.email||'?').trim().charAt(0).toUpperCase();
   $('acctName').textContent=S.me.name;$('acctEmail').textContent=S.me.email;
   $('acctPill').textContent=S.me.is_admin?t('admin'):t('member',{l:S.me.photo_limit});
@@ -1039,6 +1059,41 @@ $('favSave').onclick=async()=>{
   try{await api('/api/favorites',{method:'POST',body:{name,items}});$('favForm').hidden=true;toast(t('favSaved'));S.favs=null}
   catch(e){$('aiNote').textContent=tErr(e.code)}
 };
+
+
+/* ---------- share ---------- */
+const appUrl=()=>location.origin;
+function shareMsg(){return S.me?.invite?t('shareMsgA',{u:appUrl(),c:S.me.invite}):t('shareMsgU',{u:appUrl()})}
+function renderShare(){
+  if(!S.me)return;
+  $('shUrl').value=appUrl();
+  const admin=!!S.me.is_admin, code=S.me.invite;
+  $('shareDesc').textContent=admin?t('shareDescA'):t('shareDescU');
+  $('codeBox').hidden=!(admin&&code);$('codeVal').textContent=code||'';
+  $('noInvite').hidden=!(admin&&!code);
+  $('shareBtn').hidden=!navigator.share;
+  drawQR();
+}
+let qrP=null;
+function loadQR(){
+  if(window.qrcode)return Promise.resolve(window.qrcode);
+  return qrP||(qrP=new Promise((ok,no)=>{const sc=document.createElement('script');
+    sc.src='/static/qrcode.js';sc.onload=()=>ok(window.qrcode);sc.onerror=no;document.head.appendChild(sc)}));
+}
+async function drawQR(){
+  try{const q=await loadQR();const qr=q(0,'M');qr.addData(appUrl());qr.make();
+    $('qr').innerHTML=qr.createImgTag(6,0);$('qr').querySelector('img').alt='QR: '+appUrl();$('qrBox').hidden=false}
+  catch{$('qrBox').hidden=true}
+}
+async function copyText(txt,btn){
+  try{await navigator.clipboard.writeText(txt)}
+  catch{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch{}ta.remove()}
+  toast(t('copied'));
+}
+$('copyLink').onclick=()=>copyText(appUrl());
+$('copyCode').onclick=()=>copyText(S.me?.invite||'');
+$('copyMsg').onclick=()=>copyText(shareMsg());
+$('shareBtn').onclick=async()=>{try{await navigator.share({title:'Bocado',text:shareMsg()})}catch{}};
 
 /* ---------- theme ---------- */
 function renderTheme(){const th=lsGet('theme')||'auto';document.querySelectorAll('#themeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.th===th))}

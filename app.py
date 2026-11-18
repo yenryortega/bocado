@@ -150,6 +150,7 @@ def me_json(u):
     return {"ai": ai_enabled(),
         "email": u.email, "name": u.name, "lang": u.lang, "profile": u.profile,
         "is_admin": u.is_admin, "photos_today": photos_today(u),
+        "invite": (SIGNUP_CODE or None) if u.is_admin else None,
         "photo_limit": None if u.is_admin else DAILY_PHOTO_LIMIT,
     }
 
