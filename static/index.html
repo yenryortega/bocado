@@ -223,12 +223,13 @@ table{font-size:14px}td input.g,td input.kt{width:62px}.hide-s{display:none}}
 .smac svg{width:28px;height:28px;flex:none}
 .smac span{font-size:12px;color:var(--mute);display:block;line-height:1.2}
 .smac b{font:800 16px Nunito,sans-serif;font-variant-numeric:tabular-nums}
-.sit{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1.5px dashed var(--line)}
+.sit{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;padding:10px 0;border-bottom:1.5px dashed var(--line)}
 .sit:last-child{border:0}
 .sit b{font-weight:600;font-size:15px;display:block;overflow-wrap:anywhere}
 .sit small{color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums}
 .sit .gw{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--mute)}
-.sit input{width:72px;min-height:40px;padding:6px 8px;text-align:right}
+.sit input{width:68px;min-height:40px;padding:6px 8px;text-align:right}
+.sit input[data-sk]{font-weight:700}
 .sit .kc{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:64px;text-align:right}
 .sact{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .sact button{flex:1;min-width:140px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
@@ -880,14 +881,20 @@ function renderSheet(){
   $('shMac').innerHTML=[['i-p',tot.p],['i-c',tot.c],['i-f',tot.f]].map(([ic,v],i)=>`<div>${IC(ic)}<div><span>${esc(T().mac[i])}</span><b>${r0(v)} g</b></div></div>`).join('');
   $('shItems').innerHTML=c.items.map((i,x)=>`<div class="sit"><div><b>${esc(i.n)}</b><small>${r0(i.k)} kcal/100 g · P ${r0(i.g*(i.p||0)/100)} · C ${r0(i.g*(i.c||0)/100)} · F ${r0(i.g*(i.f||0)/100)} g</small></div>
     <label class="gw"><input type="number" inputmode="numeric" min="0" data-sx="${x}" value="${i.g}" aria-label="${esc(t('thG'))}: ${esc(i.n)}">g</label>
-    <span class="kc">${fmt(itemK(i))} kcal</span></div>`).join('');
+    <label class="gw"><input type="number" inputmode="numeric" min="0" data-sk="${x}" value="${r0(itemK(i))}" aria-label="kcal: ${esc(i.n)}">kcal</label></div>`).join('');
   $('shChips').innerHTML=MEALK.map((mk,i)=>`<button type="button" data-sm="${mk}" style="--c:${MCOL[mk]}" class="${mk===k?'on':''}">${IC('i-'+mk)}${esc(T().meals[i])}</button>`).join('');
   $('shSave').hidden=JSON.stringify({t:c.tipo,i:c.items})===c.orig;
   $('shDel').querySelector('span').textContent=S.delArm?t('confDel'):t('delMeal');
 }
 $('shItems').addEventListener('change',e=>{
-  const x=e.target.dataset.sx;if(x==null||!S.cur)return;
-  S.cur.items[+x].g=Math.max(0,Math.round(+e.target.value||0));renderSheet();
+  if(!S.cur)return;const v=Math.max(0,+e.target.value||0);
+  if(e.target.dataset.sx!=null){S.cur.items[+e.target.dataset.sx].g=Math.round(v)}
+  else if(e.target.dataset.sk!=null){
+    // kcal typed by hand -> new kcal/100 g, macros scaled with it
+    const it=S.cur.items[+e.target.dataset.sk];if(!it.g)it.g=100;
+    const nk=v*100/it.g, r=it.k>0?nk/it.k:0;it.p=(it.p||0)*r;it.c=(it.c||0)*r;it.f=(it.f||0)*r;it.k=nk;
+  }else return;
+  renderSheet();
 });
 $('shChips').onclick=e=>{const b=e.target.closest('button');if(b&&S.cur){S.cur.tipo=b.dataset.sm;renderSheet()}};
 $('shSave').onclick=async()=>{
