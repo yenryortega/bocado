@@ -203,9 +203,9 @@ table{font-size:14px}td input.g,td input.kt{width:62px}.hide-s{display:none}}
 /* meal detail sheet */
 .entry{cursor:pointer;border-radius:14px;transition:background .15s}
 .entry:hover{background:color-mix(in srgb,var(--org) 6%,transparent)}
-.sheet{position:fixed;inset:0;z-index:40;background:rgba(10,30,20,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(10,30,20,.45);display:flex;align-items:flex-end;justify-content:center;overscroll-behavior:contain;touch-action:none}
 .sheet[hidden]{display:none}
-.sbox{background:var(--card);width:min(560px,100%);max-height:88vh;overflow:auto;border-radius:28px 28px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.25);animation:up .22s ease-out}
+.sbox{background:var(--card);width:min(560px,100%);max-height:88vh;max-height:88dvh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;border-radius:28px 28px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.25);animation:up .22s ease-out}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
 @media(min-width:700px){.sheet{align-items:center}.sbox{border-radius:28px}}
 .grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
@@ -868,9 +868,11 @@ function openMeal(id){
   const m=S.day.meals.find(x=>String(x.id)===String(id));if(!m)return;
   S.cur={id:m.id,tipo:m.tipo,hora:m.hora,thumb:m.thumb,items:m.items.map(i=>({...i})),orig:JSON.stringify({t:m.tipo,i:m.items})};
   S.delArm=false;$('shErr').textContent='';renderSheet();
-  $('sheet').hidden=false;document.body.style.overflow='hidden';document.querySelector('.sbox').scrollTop=0;$('shClose').focus({preventScroll:true});
+  $('sheet').hidden=false;lockScroll();document.querySelector('.sbox').scrollTop=0;$('shClose').focus({preventScroll:true});
 }
-function closeSheet(){$('sheet').hidden=true;document.body.style.overflow='';S.cur=null}
+function lockScroll(){S.scrollY=window.scrollY;const b=document.body.style;b.position='fixed';b.top=`-${S.scrollY}px`;b.left='0';b.right='0';b.width='100%';b.overflow='hidden'}
+function unlockScroll(){const b=document.body.style;b.position=b.top=b.left=b.right=b.width=b.overflow='';window.scrollTo(0,S.scrollY||0)}
+function closeSheet(){if($('sheet').hidden)return;$('sheet').hidden=true;unlockScroll();S.cur=null}
 function renderSheet(){
   const c=S.cur;if(!c)return;
   const tot=dayTot([{items:c.items}]), k=c.tipo, col=MCOL[k]||MCOL.l;
