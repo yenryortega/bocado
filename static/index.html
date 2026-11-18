@@ -27,6 +27,7 @@
 --bad:light-dark(#c2283c,#ff8a96);--sh:light-dark(0 2px 0 rgba(30,120,70,.08),0 0 0 1px rgba(255,255,255,.04));--sh2:light-dark(0 10px 30px rgba(20,110,60,.18),0 8px 30px rgba(0,0,0,.55))}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
 html,body{overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,"Noto Sans JP",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 h1,h2,h3,.big{font-family:Nunito,"Noto Sans JP",Inter,sans-serif;font-weight:800;line-height:1.1;margin:0;text-wrap:balance}
@@ -144,6 +145,10 @@ th{font-size:12px;color:var(--mute);font-weight:600}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 td input{min-height:40px;padding:6px 8px}
 td input.g{width:76px;text-align:right}
+td input.kt{width:80px;text-align:right;font-weight:700}
+.addbox{margin-top:12px}
+.addbox #results2:empty{display:none}
+.addbox #results2{margin-top:4px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chips button{flex:none;border-radius:99px;padding:6px 14px 6px 8px;min-height:42px;font-size:15px;display:inline-flex;align-items:center;gap:6px}
 .chips button svg{width:24px;height:24px}
@@ -175,7 +180,7 @@ body.out::after{display:none}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.drop.scan::after,.spin{animation:none}}
 @media(max-width:600px){.hero{grid-template-columns:1fr;gap:10px}.plate{max-width:230px}.stats{text-align:center}.grid{grid-template-columns:1fr}.top .date{display:none}
 .mt{grid-template-columns:1fr;justify-items:center;text-align:center;padding:8px 6px 10px}.mt svg{grid-row:auto;margin-bottom:2px}.mt .bar{width:100%}
-table{font-size:14px}td input.g{width:62px}.hide-s{display:none}}
+table{font-size:14px}td input.g,td input.kt{width:62px}.hide-s{display:none}}
 
 /* add view: modes, search results, scanner, favourites */
 .modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
@@ -384,7 +389,11 @@ body.out #authBg{display:block}
         <thead><tr><th data-i="thFood"></th><th class="n" data-i="thG"></th><th class="n hide-s">kcal/100 g</th><th class="n">kcal</th><th></th></tr></thead>
         <tbody id="rows"></tbody>
       </table></div>
-      <div class="row"><button class="x" id="addRow" data-i="addFood"></button></div>
+      <div class="addbox">
+        <input id="q2" type="search" autocomplete="off" enterkeyhint="search">
+        <div id="results2"></div>
+        <div class="row" style="margin-top:8px"><button class="x" id="addRow" data-i="addHand"></button></div>
+      </div>
       <p class="sec" style="margin:18px 0 8px"><span data-i="meal"></span></p>
       <div class="chips" id="mchips"></div>
       <div class="row"><button class="acc" id="save" style="flex:1" data-i="saveToday"></button></div>
@@ -474,7 +483,7 @@ welcome:'Tus calorías, con una foto',welcomeSub:'Inicia sesión para ver tu met
 mealsToday:'Comidas de hoy',addDish:'+ Añadir plato',empty:'Aún no has registrado nada hoy.<br>Haz una foto a tu próximo plato.',last7:'Últimos 7 días',
 weekNote:'Barra coral: día por encima de tu meta. Importa la tendencia, no un día suelto.',del:'Borrar',photo:'Foto del plato',tapPhoto:'Toca para hacer una foto',
 orGallery:'o elegir una de la galería',descLbl:'Descripción o detalles (opcional)',descPh:'Ej.: con 1 cucharada de aceite; o sin foto: 2 onigiri de atún y sopa de miso',
-calc:'Calcular calorías',cancel:'Cancelar',manual:'o añadir a mano',analyzing:'Analizando el plato… (10–40 s)',result:'Resultado',fixGrams:'Corrige los gramos si hace falta. Las calorías se recalculan con: gramos × kcal/100 g ÷ 100.',
+calc:'Calcular calorías',cancel:'Cancelar',manual:'o añadir a mano',analyzing:'Analizando el plato… (10–40 s)',result:'Resultado',fixGrams:'Ajusta los gramos o las kcal de cualquier alimento. ¿Falta algo? Búscalo abajo.',
 thFood:'Alimento',thG:'Gramos',total:'Total',addFood:'+ Añadir alimento',meal:'Comida',meals:['Desayuno','Almuerzo','Merienda','Cena','Snack'],saveToday:'Guardar en hoy',
 conf:'Confianza: {c}. {n} Estimación de IA: un margen de ±20–30 % es normal; una báscula de cocina lo hace exacto.',notFood:'No encontré comida en la imagen.',
 needInput:'Haz una foto o escribe qué hay en el plato.',photosUsed:'Fotos hoy: {u} de {l}',photosAdmin:'Fotos hoy: {u} · sin límite',
@@ -500,7 +509,7 @@ welcome:'Your calories, from a photo',welcomeSub:'Sign in to see your target and
 mealsToday:'Today’s meals',addDish:'+ Add a dish',empty:'Nothing logged today yet.<br>Snap your next dish.',last7:'Last 7 days',
 weekNote:'Coral bar: a day above your target. The trend matters, not a single day.',del:'Delete',photo:'Dish photo',tapPhoto:'Tap to take a photo',
 orGallery:'or choose one from your gallery',descLbl:'Description or details (optional)',descPh:'E.g. with 1 tbsp of oil; or without a photo: 2 tuna onigiri and miso soup',
-calc:'Work out calories',cancel:'Cancel',manual:'or add by hand',analyzing:'Analysing the dish… (10–40 s)',result:'Result',fixGrams:'Fix the grams if needed. Calories recalculate as grams × kcal/100 g ÷ 100.',
+calc:'Work out calories',cancel:'Cancel',manual:'or add by hand',analyzing:'Analysing the dish… (10–40 s)',result:'Result',fixGrams:'Adjust the grams or the kcal of any food if needed. Missing something? Search it below.',
 thFood:'Food',thG:'Grams',total:'Total',addFood:'+ Add food',meal:'Meal',meals:['Breakfast','Lunch','Afternoon snack','Dinner','Snack'],saveToday:'Save to today',
 conf:'Confidence: {c}. {n} AI estimate: ±20–30% is normal; a kitchen scale makes it exact.',notFood:'I couldn’t find food in the image.',
 needInput:'Take a photo or describe what’s on the plate.',photosUsed:'Photos today: {u} of {l}',photosAdmin:'Photos today: {u} · unlimited',
@@ -526,7 +535,7 @@ welcome:'写真でカロリー管理',welcomeSub:'ログインして目標と食
 mealsToday:'今日の食事',addDish:'+ 料理を追加',empty:'今日はまだ記録がありません。<br>次の料理を撮ってみましょう。',last7:'過去7日間',
 weekNote:'コーラル：目標を超えた日。大切なのは1日ではなく傾向です。',del:'削除',photo:'料理の写真',tapPhoto:'タップして撮影',
 orGallery:'またはギャラリーから選択',descLbl:'説明・補足（任意）',descPh:'例：油大さじ1使用／写真なし：ツナおにぎり2個と味噌汁',
-calc:'カロリーを計算',cancel:'キャンセル',manual:'または手動で追加',analyzing:'料理を分析中…（10〜40秒）',result:'結果',fixGrams:'必要ならグラムを修正。カロリー＝グラム × kcal/100 g ÷ 100 で再計算します。',
+calc:'カロリーを計算',cancel:'キャンセル',manual:'または手動で追加',analyzing:'料理を分析中…（10〜40秒）',result:'結果',fixGrams:'必要に応じてグラムやkcalを修正できます。足りない食品は下で検索して追加。',
 thFood:'食品',thG:'グラム',total:'合計',addFood:'+ 食品を追加',meal:'食事',meals:['朝食','昼食','おやつ','夕食','間食'],saveToday:'今日に保存',
 conf:'信頼度：{c}。{n} AIの推定は±20〜30%が普通です。キッチンスケールなら正確です。',notFood:'画像に食べ物が見つかりませんでした。',
 needInput:'写真を撮るか、料理の内容を書いてください。',photosUsed:'今日の写真：{u} / {l}',photosAdmin:'今日の写真：{u}・無制限',
@@ -555,6 +564,8 @@ savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました�
 Object.keys(EXTRA).forEach(k=>Object.assign(L[k],EXTRA[k]));
 const EXTRA2={"en": {"modePhoto": "Photo", "modeSearch": "Search", "modeBarcode": "Barcode", "modeFav": "Favorites", "searchPh": "Rice, chicken, banana…", "searchEmpty": "No matches. Add it by hand.", "foodsNote": "Approximate values from standard food tables.", "addTo": "Add", "scanBtn": "Scan a barcode", "scanHint": "Take a clear photo of the barcode on the package.", "codePh": "Or type the number", "lookup": "Look up", "scanning": "Reading barcode…", "noCode": "Couldn't read the barcode. Try a sharper photo or type the number.", "favs": "Favorites", "recents": "Recent", "noFavs": "Save a meal as a favorite to add it in one tap.", "noRecents": "Your recent meals will show up here.", "saveFav": "Save as favorite", "favName": "Favorite name", "favSaveBtn": "Save", "favSaved": "Saved to favorites", "added": "Added: {n}", "myMeal": "Your meal", "theme": "Theme", "thAuto": "Auto", "thLight": "Light", "thDark": "Dark"}, "es": {"modePhoto": "Foto", "modeSearch": "Buscar", "modeBarcode": "Código", "modeFav": "Favoritos", "searchPh": "Arroz, pollo, plátano…", "searchEmpty": "Sin resultados. Añádelo a mano.", "foodsNote": "Valores aproximados de tablas de composición.", "addTo": "Añadir", "scanBtn": "Escanear código de barras", "scanHint": "Haz una foto nítida del código del envase.", "codePh": "O escribe el número", "lookup": "Buscar", "scanning": "Leyendo código…", "noCode": "No pude leer el código. Prueba con otra foto o escribe el número.", "favs": "Favoritos", "recents": "Recientes", "noFavs": "Guarda una comida como favorita para añadirla con un toque.", "noRecents": "Aquí aparecerán tus comidas recientes.", "saveFav": "Guardar como favorito", "favName": "Nombre del favorito", "favSaveBtn": "Guardar", "favSaved": "Guardado en favoritos", "added": "Añadido: {n}", "myMeal": "Tu comida", "theme": "Tema", "thAuto": "Automático", "thLight": "Claro", "thDark": "Oscuro"}, "ja": {"modePhoto": "写真", "modeSearch": "検索", "modeBarcode": "バーコード", "modeFav": "お気に入り", "searchPh": "ごはん、鶏肉、バナナ…", "searchEmpty": "見つかりません。手動で追加してください。", "foodsNote": "食品成分表に基づくおおよその値です。", "addTo": "追加", "scanBtn": "バーコードを読み取る", "scanHint": "パッケージのバーコードをはっきり撮影してください。", "codePh": "または番号を入力", "lookup": "検索", "scanning": "読み取り中…", "noCode": "バーコードを読み取れませんでした。別の写真を試すか番号を入力してください。", "favs": "お気に入り", "recents": "最近", "noFavs": "食事をお気に入りに保存すると、ワンタップで追加できます。", "noRecents": "最近の食事がここに表示されます。", "saveFav": "お気に入りに保存", "favName": "お気に入りの名前", "favSaveBtn": "保存", "favSaved": "お気に入りに保存しました", "added": "追加しました：{n}", "myMeal": "あなたの食事", "theme": "テーマ", "thAuto": "自動", "thLight": "ライト", "thDark": "ダーク"}};
 const ERRX={"en": {"not_found": "Product not found in Open Food Facts.", "no_nutrition": "That product has no calorie data.", "lookup_failed": "Couldn't reach Open Food Facts. Try again.", "bad_code": "Enter a valid barcode number.", "ai_off": "Photo analysis is not set up.", "bad_fav": "Add at least one food first.", "too_many_favs": "You have too many favorites. Delete some first."}, "es": {"not_found": "Producto no encontrado en Open Food Facts.", "no_nutrition": "Ese producto no tiene datos de calorías.", "lookup_failed": "No pude conectar con Open Food Facts. Inténtalo de nuevo.", "bad_code": "Escribe un código de barras válido.", "ai_off": "El análisis de fotos no está configurado.", "bad_fav": "Añade al menos un alimento primero.", "too_many_favs": "Tienes demasiados favoritos. Borra alguno."}, "ja": {"not_found": "Open Food Factsに商品が見つかりません。", "no_nutrition": "この商品にはカロリー情報がありません。", "lookup_failed": "Open Food Factsに接続できません。もう一度お試しください。", "bad_code": "正しいバーコード番号を入力してください。", "ai_off": "写真分析は設定されていません。", "bad_fav": "まず食品を1つ以上追加してください。", "too_many_favs": "お気に入りが多すぎます。いくつか削除してください。"}};
+const EXTRA4={"en": {"addHand": "+ Add by hand", "searchAdd": "Search a food to add…"}, "es": {"addHand": "+ Añadir a mano", "searchAdd": "Busca un alimento para añadir…"}, "ja": {"addHand": "+ 手動で追加", "searchAdd": "追加する食品を検索…"}};
+Object.keys(EXTRA4).forEach(k=>Object.assign(L[k],EXTRA4[k]));
 const EXTRA3={"en": {"foods": "Foods", "saveChanges": "Save changes", "delMeal": "Delete meal", "close": "Close", "updated": "Meal updated", "details": "Details", "confDel": "Delete this meal?"}, "es": {"foods": "Alimentos", "saveChanges": "Guardar cambios", "delMeal": "Borrar comida", "close": "Cerrar", "updated": "Comida actualizada", "details": "Detalles", "confDel": "¿Borrar esta comida?"}, "ja": {"foods": "食品", "saveChanges": "変更を保存", "delMeal": "食事を削除", "close": "閉じる", "updated": "更新しました", "details": "詳細", "confDel": "この食事を削除しますか？"}};
 Object.keys(EXTRA3).forEach(k=>Object.assign(L[k],EXTRA3[k]));
 Object.keys(EXTRA2).forEach(k=>{Object.assign(L[k],EXTRA2[k]);L[k].err=Object.assign({},L[k].err,ERRX[k])});
@@ -608,7 +619,7 @@ function applyLang(){
   document.documentElement.lang=S.lang;
   document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));
   document.querySelectorAll('.langSeg button').forEach(b=>b.classList.toggle('on',b.dataset.l===S.lang));
-  $('desc').placeholder=t('descPh');$('q').placeholder=t('searchPh');$('code').placeholder=t('codePh');$('favName').placeholder=t('favName');
+  $('desc').placeholder=t('descPh');$('q').placeholder=t('searchPh');$('q2').placeholder=t('searchAdd');$('code').placeholder=t('codePh');$('favName').placeholder=t('favName');
   renderTheme();if(S.cur)renderSheet();if(S.mode2==='search')renderResults();if(S.mode2==='fav'&&S.favs)renderFavs();
   $('fabLbl').setAttribute('aria-label',t('snap'));
   $('today').textContent=new Date().toLocaleDateString(LOC[S.lang],{weekday:'long',day:'numeric',month:'long'});
@@ -792,7 +803,7 @@ $('confYes').onclick=async()=>{
 /* ---------- photo + analysis ---------- */
 function defaultMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;return h<10.5?'b':h<15.5?'l':h<18?'m':'d'}
 function resetAdd(){
-  S.draft=[];S.file=null;S.thumb=null;$('resCard').hidden=true;$('favForm').hidden=true;$('q').value='';$('bcStatus').textContent='';$('code').value='';$('desc').value='';$('file').value='';$('fabFile').value='';
+  S.draft=[];S.file=null;S.thumb=null;$('resCard').hidden=true;$('favForm').hidden=true;$('q').value='';$('q2').value='';$('results2').innerHTML='';$('bcStatus').textContent='';$('code').value='';$('desc').value='';$('file').value='';$('fabFile').value='';
   $('drop').querySelector('img')?.remove();$('dropTxt').hidden=false;$('aiMsg').innerHTML='';$('status').textContent='';
 }
 function setPhoto(f){
@@ -931,6 +942,15 @@ let FOODS=null;
 const norm=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 async function loadFoods(){if(FOODS)return FOODS;try{FOODS=await (await fetch('/static/foods.json')).json()}catch{FOODS=[]}return FOODS}
 const fname=f=>f[S.lang]||f.en;
+function foodListHTML(raw,max){
+  const q=norm(raw);let list=FOODS||[];
+  if(q){list=list.filter(f=>norm(f.en+' '+f.es+' '+f.ja).includes(q));
+    list.sort((a,b)=>(norm(fname(b)).startsWith(q)?1:0)-(norm(fname(a)).startsWith(q)?1:0))}
+  list=list.slice(0,max);
+  return list.length?list.map(f=>`<div class="res"><div><b>${esc(fname(f))}</b><small>${r0(f.k)} kcal/100 g · ${f.g} g = ${r0(f.k*f.g/100)} kcal</small></div><span></span>
+    <button class="fadd" data-food="${FOODS.indexOf(f)}" aria-label="${esc(t('addTo'))}: ${esc(fname(f))}">${IC('u-plus')}</button></div>`).join('')
+    :`<p class="empty2">${esc(t('searchEmpty'))}</p>`;
+}
 function renderResults(){
   if(!FOODS)return;
   const q=norm($('q').value.trim());
@@ -1026,13 +1046,27 @@ function renderDraft(){
   $('rows').innerHTML=S.draft.map((i,x)=>`<tr><td><input data-x="${x}" data-f="n" value="${esc(i.n)}" aria-label="${esc(t('thFood'))}"></td>
    <td class="n"><input class="g" type="number" inputmode="numeric" min="0" data-x="${x}" data-f="g" value="${i.g}" aria-label="${esc(t('thG'))}"></td>
    <td class="n hide-s"><input class="g" type="number" inputmode="decimal" min="0" data-x="${x}" data-f="k" value="${i.k}" aria-label="kcal/100 g"></td>
-   <td class="n" id="k${x}">${r0(itemK(i))}</td><td><button class="del" data-rm="${x}" aria-label="${esc(t('del'))}">${IC('u-x')}</button></td></tr>`).join('');
+   <td class="n"><input class="kt" type="number" inputmode="numeric" min="0" data-x="${x}" data-f="kt" id="k${x}" value="${r0(itemK(i))}" aria-label="kcal"></td><td><button class="del" data-rm="${x}" aria-label="${esc(t('del'))}">${IC('u-x')}</button></td></tr>`).join('');
   totDraft();
 }
-$('rows').addEventListener('input',e=>{const el=e.target,x=+el.dataset.x,f=el.dataset.f;if(!S.draft[x])return;
-  S.draft[x][f]=f==='n'?el.value:Math.max(0,+el.value||0);$('k'+x).textContent=r0(itemK(S.draft[x]));totDraft()});
+$('rows').addEventListener('input',e=>{const el=e.target,x=+el.dataset.x,f=el.dataset.f,it=S.draft[x];if(!it)return;
+  if(f==='n'){it.n=el.value;return}
+  const v=Math.max(0,+el.value||0);
+  if(f==='kt'){
+    // total kcal typed by hand -> derive kcal/100 g (macros scale with it if they were known)
+    if(!it.g){it.g=100;const gi=el.closest('tr').querySelector('[data-f=g]');if(gi)gi.value=100}
+    const nk=v*100/it.g, ratio=it.k>0?nk/it.k:0;
+    it.p=(it.p||0)*ratio;it.c=(it.c||0)*ratio;it.f=(it.f||0)*ratio;it.k=nk;
+    const ki=el.closest('tr').querySelector('[data-f=k]');if(ki)ki.value=Math.round(nk*10)/10;
+  }else{
+    it[f]=v;$('k'+x).value=r0(itemK(it));
+  }
+  totDraft()});
 $('rows').addEventListener('click',e=>{const x=e.target.closest('button')?.dataset.rm;if(x!=null){S.draft.splice(+x,1);renderDraft()}});
 $('addRow').onclick=()=>{S.draft.push({n:'',g:100,k:0,p:0,c:0,f:0});renderDraft();$('rows').lastElementChild.querySelector('input').focus()};
+$('q2').addEventListener('focus',()=>loadFoods());
+$('q2').addEventListener('input',async()=>{await loadFoods();const q=$('q2').value.trim();$('results2').innerHTML=q?foodListHTML(q,6):''});
+$('results2').onclick=e=>{const b=e.target.closest('button[data-food]');if(!b)return;const f=FOODS[+b.dataset.food];S.draft.push({n:fname(f),g:f.g,k:f.k,p:f.p,c:f.c,f:f.f});renderDraft();b.classList.add('ok');setTimeout(()=>b.classList.remove('ok'),700);toast(t('added',{n:fname(f)}))};
 $('save').onclick=async()=>{
   const items=S.draft.filter(i=>String(i.n).trim()&&i.g>0);if(!items.length)return;
   const d=new Date();$('save').disabled=true;
