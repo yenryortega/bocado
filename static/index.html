@@ -471,6 +471,7 @@ body.out #authBg{display:block}
     </div>
   </div>
 </div>
+<datalist id="foodNames"></datalist>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -620,7 +621,7 @@ function applyLang(){
   document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));
   document.querySelectorAll('.langSeg button').forEach(b=>b.classList.toggle('on',b.dataset.l===S.lang));
   $('desc').placeholder=t('descPh');$('q').placeholder=t('searchPh');$('q2').placeholder=t('searchAdd');$('code').placeholder=t('codePh');$('favName').placeholder=t('favName');
-  renderTheme();if(S.cur)renderSheet();if(S.mode2==='search')renderResults();if(S.mode2==='fav'&&S.favs)renderFavs();
+  renderTheme();fillNames();if(S.cur)renderSheet();if(S.mode2==='search')renderResults();if(S.mode2==='fav'&&S.favs)renderFavs();
   $('fabLbl').setAttribute('aria-label',t('snap'));
   $('today').textContent=new Date().toLocaleDateString(LOC[S.lang],{weekday:'long',day:'numeric',month:'long'});
   const av=$('act').value,ov=$('obj').value;
@@ -940,7 +941,8 @@ function addItems(items,title){
 /* ---------- search ---------- */
 let FOODS=null;
 const norm=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
-async function loadFoods(){if(FOODS)return FOODS;try{FOODS=await (await fetch('/static/foods.json')).json()}catch{FOODS=[]}return FOODS}
+async function loadFoods(){if(FOODS)return FOODS;try{FOODS=await (await fetch('/static/foods.json')).json()}catch{FOODS=[]}fillNames();return FOODS}
+function fillNames(){if(FOODS)$('foodNames').innerHTML=FOODS.map(f=>`<option value="${esc(fname(f))}"></option>`).join('')}
 const fname=f=>f[S.lang]||f.en;
 function foodListHTML(raw,max){
   const q=norm(raw);let list=FOODS||[];
@@ -1043,14 +1045,20 @@ function showDraft(items,title){
 }
 function totDraft(){$('tot').innerHTML=`${fmt(S.draft.reduce((a,i)=>a+itemK(i),0))}<small> kcal</small>`}
 function renderDraft(){
-  $('rows').innerHTML=S.draft.map((i,x)=>`<tr><td><input data-x="${x}" data-f="n" value="${esc(i.n)}" aria-label="${esc(t('thFood'))}"></td>
+  $('rows').innerHTML=S.draft.map((i,x)=>`<tr><td><input data-x="${x}" data-f="n" list="foodNames" value="${esc(i.n)}" aria-label="${esc(t('thFood'))}"></td>
    <td class="n"><input class="g" type="number" inputmode="numeric" min="0" data-x="${x}" data-f="g" value="${i.g}" aria-label="${esc(t('thG'))}"></td>
    <td class="n hide-s"><input class="g" type="number" inputmode="decimal" min="0" data-x="${x}" data-f="k" value="${i.k}" aria-label="kcal/100 g"></td>
    <td class="n"><input class="kt" type="number" inputmode="numeric" min="0" data-x="${x}" data-f="kt" id="k${x}" value="${r0(itemK(i))}" aria-label="kcal"></td><td><button class="del" data-rm="${x}" aria-label="${esc(t('del'))}">${IC('u-x')}</button></td></tr>`).join('');
   totDraft();
 }
 $('rows').addEventListener('input',e=>{const el=e.target,x=+el.dataset.x,f=el.dataset.f,it=S.draft[x];if(!it)return;
-  if(f==='n'){it.n=el.value;return}
+  if(f==='n'){it.n=el.value;
+    // picked a known food from the suggestions -> take its values so grams drive the kcal
+    const hit=(FOODS||[]).find(fd=>[fd.en,fd.es,fd.ja].some(v=>norm(v)===norm(el.value)));
+    if(hit){const tr=el.closest('tr');it.k=hit.k;it.p=hit.p;it.c=hit.c;it.f=hit.f;
+      if(!it.g){it.g=hit.g;tr.querySelector('[data-f=g]').value=hit.g}
+      const ki=tr.querySelector('[data-f=k]');if(ki)ki.value=hit.k;$('k'+x).value=r0(itemK(it));totDraft()}
+    return}
   const v=Math.max(0,+el.value||0);
   if(f==='kt'){
     // total kcal typed by hand -> derive kcal/100 g (macros scale with it if they were known)
@@ -1063,7 +1071,7 @@ $('rows').addEventListener('input',e=>{const el=e.target,x=+el.dataset.x,f=el.da
   }
   totDraft()});
 $('rows').addEventListener('click',e=>{const x=e.target.closest('button')?.dataset.rm;if(x!=null){S.draft.splice(+x,1);renderDraft()}});
-$('addRow').onclick=()=>{S.draft.push({n:'',g:100,k:0,p:0,c:0,f:0});renderDraft();$('rows').lastElementChild.querySelector('input').focus()};
+$('addRow').onclick=()=>{loadFoods();S.draft.push({n:'',g:100,k:0,p:0,c:0,f:0});renderDraft();$('rows').lastElementChild.querySelector('input').focus()};
 $('q2').addEventListener('focus',()=>loadFoods());
 $('q2').addEventListener('input',async()=>{await loadFoods();const q=$('q2').value.trim();$('results2').innerHTML=q?foodListHTML(q,6):''});
 $('results2').onclick=e=>{const b=e.target.closest('button[data-food]');if(!b)return;const f=FOODS[+b.dataset.food];S.draft.push({n:fname(f),g:f.g,k:f.k,p:f.p,c:f.c,f:f.f});renderDraft();b.classList.add('ok');setTimeout(()=>b.classList.remove('ok'),700);toast(t('added',{n:fname(f)}))};
