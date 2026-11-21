@@ -25,7 +25,15 @@
 --line:light-dark(#dcefe3,#26352c);--org:light-dark(#22a565,#2fb873);--orgd:light-dark(#178a52,#1f8f57);--sun:#ffc93c;--leaf:#3bb273;--berry:#ff7a59;--mp:#ff7a59;--mc:#ffc93c;--mf:#5ba8f5;--sky:#5b8def;
 --band:linear-gradient(155deg,#3cc983 0%,#22a565 52%,#14917a 100%);
 --bad:light-dark(#c2283c,#ff8a96);--sh:light-dark(0 2px 0 rgba(30,120,70,.08),0 0 0 1px rgba(255,255,255,.04));--sh2:light-dark(0 10px 30px rgba(20,110,60,.18),0 8px 30px rgba(0,0,0,.55))}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+:root[data-theme=light]{color-scheme:light}
+.splash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s ease,visibility .4s}
+.splash img{width:104px;height:104px;border-radius:26px;box-shadow:0 10px 30px rgba(20,145,90,.25);animation:spPulse 1.6s ease-in-out infinite}
+.splash b{font:900 30px Nunito,sans-serif;color:var(--org);letter-spacing:-.5px}
+.sbar{width:160px;height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:6px}
+.sbar i{display:block;height:100%;width:0;background:var(--org);border-radius:3px;transition:width .45s ease}
+.splash.done{opacity:0;visibility:hidden}.splash.done img{transform:scale(1.08);transition:transform .4s ease}
+@keyframes spPulse{50%{transform:scale(1.04)}}
+@media(prefers-reduced-motion:reduce){.splash img{animation:none}.splash,.sbar i{transition:none}}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 [hidden]{display:none!important}
 html,body{overflow-x:clip}
@@ -324,6 +332,11 @@ body.out #authBg{display:block}
 </style>
 </head>
 <body class="out">
+<div class="splash" id="splash" aria-hidden="true">
+  <img src="/static/icon.svg" alt="" width="104" height="104">
+  <b>Bocado</b>
+  <div class="sbar"><i id="splashBar"></i></div>
+</div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
  <symbol id="i-b" viewBox="0 0 48 48"><path d="M17 5c-2 3 2 4 0 7M24 3c-2 3 2 4 0 7M31 5c-2 3 2 4 0 7" stroke="#d9a07a" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M34 21h2.5a6.5 6.5 0 0 1 0 13H34" stroke="#f0a81c" stroke-width="4" fill="none"/><path d="M8 17h28v15a10 10 0 0 1-10 10h-8A10 10 0 0 1 8 32z" fill="#ffc93c"/><ellipse cx="22" cy="17.5" rx="14" ry="3.4" fill="#8b5a3c"/><path d="M12 28c.5 5 3.5 9 8 9.5" stroke="#fff" stroke-opacity=".6" stroke-width="2.6" fill="none" stroke-linecap="round"/></symbol>
  <symbol id="i-l" viewBox="0 0 48 48"><path d="M29 3l9 18M35 2l6 19" stroke="#b5794e" stroke-width="2.6" stroke-linecap="round"/><path d="M8 24c0-7 7-11.5 16-11.5S40 17 40 24z" fill="#fff" stroke="#efdccb" stroke-width="1.5"/><circle cx="17" cy="19" r="1.5" fill="#efdccb"/><circle cx="24" cy="16" r="1.5" fill="#efdccb"/><circle cx="31" cy="19.5" r="1.5" fill="#efdccb"/><path d="M4 24h40a20 17 0 0 1-40 0z" fill="#ff6b2c"/><path d="M13 31h22" stroke="#fff" stroke-opacity=".5" stroke-width="2.6" stroke-linecap="round"/><rect x="17" y="39" width="14" height="5" rx="2.5" fill="#e8551b"/></symbol>
@@ -1420,7 +1433,19 @@ $('save').onclick=async()=>{
 S.mtype=defaultMeal();
 S.lang=L[lsGet('lang')]?lsGet('lang'):'en';
 applyLang();
-(async()=>{try{await enter(await api('/api/me'))}catch(e){if(e.code!=='auth')showAuth()}})();
+/* startup splash: logo + progress bar while the session and today's data load */
+const splashP=v=>{const b=document.getElementById('splashBar');if(b)b.style.width=v+'%'};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function hideSplash(){const sp=document.getElementById('splash');if(!sp)return;sp.classList.add('done');
+  if(S.me){setArcs(0,0,0,0);setTimeout(renderTop,120)}setTimeout(()=>sp.remove(),450)}
+(async()=>{
+  const t0=performance.now();requestAnimationFrame(()=>splashP(18));
+  let ok=false;
+  try{const me=await api('/api/me');splashP(55);await enter(me);splashP(100);ok=true}
+  catch(e){if(e.code!=='auth')showAuth()}
+  if(ok)await wait(Math.max(350,1000-(performance.now()-t0)));
+  hideSplash();
+})();
 }
 </script>
 </body>
