@@ -131,6 +131,13 @@ div.th svg{width:30px;height:30px;opacity:.85}
 .dc b{font:900 46px Nunito,sans-serif;line-height:1;font-variant-numeric:tabular-nums}.dc small{color:var(--mute);margin-top:4px;font-size:14px}
 .dsub{text-align:center;font:800 17px Nunito,sans-serif;margin:12px 0 0}.dsub.over{color:var(--berry)}
 .dhint{text-align:center;color:var(--mute);font-size:12px;margin:18px 0 0}
+.askm{position:fixed;inset:0;z-index:70;background:rgba(10,30,20,.5);display:grid;place-items:center;padding:24px;animation:fadeIn .15s ease}
+.abox{background:var(--card);border-radius:26px;padding:22px 20px 18px;width:min(340px,100%);text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:popIn .18s ease}
+.abox h3{margin:10px 0 4px;font-size:20px}.abox p{margin:0 0 18px;font-size:14px;overflow-wrap:anywhere}
+.aic{width:52px;height:52px;border-radius:50%;margin:0 auto;display:grid;place-items:center;background:color-mix(in srgb,var(--berry) 16%,var(--card));color:var(--berry)}.aic svg{width:26px;height:26px}
+.abtn #askYes{background:var(--berry);color:#fff;border-color:var(--berry);justify-content:center}
+.abtn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@keyframes fadeIn{from{opacity:0}}@keyframes popIn{from{transform:scale(.94);opacity:0}}
 .ew{position:relative;overflow:hidden;border-radius:14px}
 .ew .entry{position:relative;z-index:1;background:var(--card);touch-action:pan-y;transition:transform .2s ease}
 .swdel{position:absolute;right:0;top:0;bottom:0;width:88px;border:0;border-radius:14px;background:var(--berry);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 12px Inter,sans-serif;box-shadow:none;padding:0}
@@ -535,6 +542,13 @@ body.out #authBg{display:block}
     <p class="dhint" id="dHint"></p>
   </div>
 </div>
+<div class="askm" id="askM" hidden>
+  <div class="abox" role="alertdialog" aria-modal="true" aria-labelledby="askT" aria-describedby="askD">
+    <div class="aic"><svg aria-hidden="true"><use href="#u-trash"/></svg></div>
+    <h3 id="askT"></h3><p id="askD" class="muted"></p>
+    <div class="abtn"><button type="button" id="askNo"></button><button type="button" class="danger" id="askYes"></button></div>
+  </div>
+</div>
 <div class="sheet" id="sheet" hidden>
   <div class="sbox" role="dialog" aria-modal="true" aria-labelledby="shTitle">
     <div class="grab"></div>
@@ -930,7 +944,8 @@ $('slots').addEventListener('click',async e=>{
   if(b.dataset.slot){openAdd(b.dataset.slot);return}
   if(b.dataset.del){
     e.stopPropagation();
-    const id=b.dataset.del;
+    const id=b.dataset.del, m=S.day.meals.find(x=>String(x.id)===id);
+    if(!await askConfirm(t('confDel'),m?`${m.items.map(i=>i.n).join(', ')} · ${fmt(mealK(m))} kcal`:'')){closeSwipes();return}
     try{await api('/api/meals/'+id,{method:'DELETE'});S.day.meals=S.day.meals.filter(m=>String(m.id)!==id);renderAll()}catch{}
   }
 });
@@ -1008,6 +1023,17 @@ function openMeal(id){
   S.cur={id:m.id,tipo:m.tipo,hora:m.hora,thumb:m.thumb,items:m.items.map(i=>({...i})),orig:JSON.stringify({t:m.tipo,i:m.items})};
   S.delArm=false;$('shErr').textContent='';renderSheet();
   $('sheet').hidden=false;lockScroll();document.querySelector('#sheet .sbox').scrollTop=0;$('shClose').focus({preventScroll:true});
+}
+function askConfirm(title,desc){
+  return new Promise(res=>{
+    $('askT').textContent=title;$('askD').textContent=desc||'';$('askYes').textContent=t('del');$('askNo').textContent=t('cancel');
+    const M=$('askM'),prev=document.activeElement;M.hidden=false;$('askNo').focus({preventScroll:true});
+    const done=v=>{M.hidden=true;M.onclick=null;document.removeEventListener('keydown',key,true);prev?.focus?.({preventScroll:true});res(v)};
+    const key=e=>{if(e.key==='Escape'){e.stopPropagation();done(false)}};
+    document.addEventListener('keydown',key,true);
+    $('askYes').onclick=()=>done(true);$('askNo').onclick=()=>done(false);
+    M.onclick=e=>{if(e.target===M)done(false)};
+  });
 }
 function lockScroll(){if((S.lockN=(S.lockN||0)+1)>1)return;S.scrollY=window.scrollY;const b=document.body.style;b.position='fixed';b.top=`-${S.scrollY}px`;b.left='0';b.right='0';b.width='100%';b.overflow='hidden'}
 function unlockScroll(){S.lockN=Math.max(0,(S.lockN||0)-1);if(S.lockN)return;const b=document.body.style;b.position=b.top=b.left=b.right=b.width=b.overflow='';window.scrollTo(0,S.scrollY||0)}
@@ -1111,7 +1137,7 @@ $('shFav').onclick=async()=>{
 };
 $('shDel').onclick=async()=>{
   const c=S.cur;if(!c)return;
-  if(!S.delArm){S.delArm=true;renderSheet();return}
+  if(!await askConfirm(t('confDel'),`${c.items.map(i=>i.n).join(', ')} · ${fmt(mealK(c))} kcal`))return;
   try{await api('/api/meals/'+c.id,{method:'DELETE'});const fm=findMeal(c.id);if(fm){if(fm.key===TODAY)S.day.meals=S.day.meals.filter(m=>String(m.id)!==String(c.id));else S.hist[fm.key]=fm.list.filter(m=>String(m.id)!==String(c.id))}closeSheet();renderAll();toast(t('deleted'))}
   catch(e){$('shErr').textContent=tErr(e.code)}
 };
