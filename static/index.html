@@ -150,6 +150,7 @@ div.th svg{width:30px;height:30px;opacity:.85}
 .ew .entry{position:relative;z-index:1;background:var(--card);touch-action:pan-y;transition:transform .2s ease}
 .swdel{position:absolute;right:0;top:0;bottom:0;width:88px;border:0;border-radius:14px;background:var(--berry);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 12px Inter,sans-serif;box-shadow:none;padding:0}
 .swdel svg{width:20px;height:20px}
+.swdel{visibility:hidden}.ew.sw .swdel{visibility:visible}
 .del{width:44px;height:44px;padding:0;border:0;background:none;color:var(--mute);display:grid;place-items:center;box-shadow:none}
 .del svg{width:18px;height:18px}
 /* week */
@@ -1088,18 +1089,19 @@ function slideIn(box,dir){box.style.transition='none';box.style.transform=`trans
   requestAnimationFrame(()=>requestAnimationFrame(()=>{box.style.transition='transform .22s ease,opacity .22s ease';box.style.transform='';box.style.opacity=''}))}
 /* swipe left on a meal to reveal Delete */
 const SW={el:null,x0:0,y0:0,dx:0,mode:null,justSwiped:false};
-function closeSwipes(except){document.querySelectorAll('#slots .entry.open').forEach(e=>{if(e!==except){e.classList.remove('open');e.style.transform=''}})}
+function hideDel(en){setTimeout(()=>{if(!en.classList.contains('open'))en.parentNode?.classList.remove('sw')},220)}
+function closeSwipes(except){document.querySelectorAll('#slots .entry.open').forEach(e=>{if(e!==except){e.classList.remove('open');e.style.transform='';hideDel(e)}})}
 $('slots').addEventListener('touchstart',e=>{
   const en=e.target.closest('.entry');if(!en||e.touches.length!==1)return;
   SW.el=en;SW.x0=e.touches[0].clientX;SW.y0=e.touches[0].clientY;SW.dx=0;SW.mode=null;SW.base=en.classList.contains('open')?-88:0;en.style.transition='none'},{passive:true});
 $('slots').addEventListener('touchmove',e=>{
   if(!SW.el)return;const dx=e.touches[0].clientX-SW.x0, dy=e.touches[0].clientY-SW.y0;
-  if(!SW.mode){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;SW.mode=Math.abs(dx)>Math.abs(dy)?'h':'v';if(SW.mode==='h')closeSwipes(SW.el)}
+  if(!SW.mode){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;SW.mode=Math.abs(dx)>Math.abs(dy)?'h':'v';if(SW.mode==='h'){closeSwipes(SW.el);SW.el.parentNode.classList.add('sw')}}
   if(SW.mode!=='h')return;e.preventDefault();
   SW.dx=dx;SW.el.style.transform=`translateX(${Math.min(0,Math.max(-120,SW.base+dx))}px)`},{passive:false});
 const swEnd=()=>{
   const en=SW.el;if(!en)return;en.style.transition='';
-  if(SW.mode==='h'){const pos=SW.base+SW.dx, open=pos<-44;en.classList.toggle('open',open);en.style.transform=open?'translateX(-88px)':'';
+  if(SW.mode==='h'){const pos=SW.base+SW.dx, open=pos<-44;en.classList.toggle('open',open);en.style.transform=open?'translateX(-88px)':'';if(!open)hideDel(en);
     SW.justSwiped=true;setTimeout(()=>SW.justSwiped=false,350)}
   SW.el=null;SW.mode=null};
 $('slots').addEventListener('touchend',swEnd);$('slots').addEventListener('touchcancel',swEnd);
