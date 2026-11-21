@@ -249,6 +249,18 @@ table{font-size:14px}td input.g,td input.kt{width:62px}.hide-s{display:none}}
 .dmeal .th{width:48px;height:48px;border-radius:14px}
 .dmeal b{font:800 16px Nunito,sans-serif}
 .dmeal .k{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+/* live barcode scanner */
+button.scanbtn{width:100%;font:inherit;color:inherit;min-height:auto}
+.pick{position:relative;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.pick input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.scanner{position:fixed;inset:0;z-index:60;background:#000;display:grid;place-items:center;touch-action:none}
+.scanner video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sframe{position:relative;width:min(82vw,420px);height:min(34vh,200px);border-radius:20px;box-shadow:0 0 0 9999px rgba(0,0,0,.5);border:3px solid rgba(255,255,255,.9);overflow:hidden}
+.sframe i{position:absolute;left:6%;right:6%;height:2px;top:50%;background:var(--sun);box-shadow:0 0 12px var(--sun);animation:sline 1.8s ease-in-out infinite alternate}
+@keyframes sline{from{top:15%}to{top:85%}}
+.shint{position:absolute;left:0;right:0;bottom:calc(110px + env(safe-area-inset-bottom));text-align:center;color:#fff;font:700 17px Nunito,sans-serif;margin:0}
+.sclose{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(36px + env(safe-area-inset-bottom));background:#fff;color:#14261c;border:0;border-radius:99px;padding:12px 28px;font-weight:800}
+@media(prefers-reduced-motion:reduce){.sframe i{animation:none}}
 /* login: tilted tile wall + centred card */
 body.out .band,body.out .tabbar,body.out #storeNote{display:none}
 body.out main{padding:0;max-width:none}
@@ -390,7 +402,8 @@ body.out #authBg{display:block}
       <p class="note"><span data-i="foodsNote"></span> <button class="linkbtn" id="manualBtn2" style="display:inline;margin:0" data-i="manual"></button></p>
     </div>
     <div class="card" id="p-barcode" hidden>
-      <label class="scanbtn"><input type="file" id="bcFile" accept="image/*"><svg aria-hidden="true"><use href="#u-barcode"/></svg><b data-i="scanBtn"></b><span class="muted" data-i="scanHint"></span></label>
+      <button type="button" class="scanbtn" id="scanLiveBtn"><svg aria-hidden="true"><use href="#u-barcode"/></svg><b data-i="scanBtn"></b><span class="muted" data-i="scanHint2"></span></button>
+      <div class="row"><label class="x pick"><input type="file" id="bcFile" accept="image/*"><svg aria-hidden="true" style="width:18px;height:18px"><use href="#u-cam"/></svg><span data-i="usePhoto"></span></label></div>
       <div class="row"><input id="code" inputmode="numeric" maxlength="14" style="flex:1"><button id="lookup" data-i="lookup"></button></div>
       <p class="note" id="bcStatus"></p>
       <p class="note">Open Food Facts</p>
@@ -507,6 +520,12 @@ body.out #authBg{display:block}
     </div>
   </div>
 </div>
+<div class="scanner" id="scanner" hidden>
+  <video id="scanVideo" playsinline muted autoplay></video>
+  <div class="sframe"><i></i></div>
+  <p class="shint" data-i="scanLive"></p>
+  <button class="sclose" id="scanClose" data-i="close"></button>
+</div>
 <datalist id="foodNames"></datalist>
 <div class="toast" id="toast" role="status"></div>
 
@@ -607,6 +626,8 @@ const EXTRA5={"en": {"share": "Share", "shareDescA": "Send the link and the invi
 Object.keys(EXTRA5).forEach(k=>Object.assign(L[k],EXTRA5[k]));
 const EXTRA6={"en": {"qrShow": "QR code", "qrHide": "Hide QR code", "noMeals": "Nothing logged this day."}, "es": {"qrShow": "Código QR", "qrHide": "Ocultar código QR", "noMeals": "Este día no hay nada registrado."}, "ja": {"qrShow": "QRコード", "qrHide": "QRコードを隠す", "noMeals": "この日は記録がありません。"}};
 Object.keys(EXTRA6).forEach(k=>Object.assign(L[k],EXTRA6[k]));
+const EXTRA7={"en": {"scanHint2": "Opens the camera and reads the code automatically.", "usePhoto": "Use a photo instead", "scanLive": "Point the camera at the barcode", "camDenied": "Couldn't open the camera. Allow camera access in your browser settings, or use a photo."}, "es": {"scanHint2": "Abre la cámara y lee el código automáticamente.", "usePhoto": "Usar una foto", "scanLive": "Apunta la cámara al código de barras", "camDenied": "No pude abrir la cámara. Permite el acceso a la cámara en los ajustes del navegador o usa una foto."}, "ja": {"scanHint2": "カメラが開いて自動でコードを読み取ります。", "usePhoto": "写真を使う", "scanLive": "バーコードにカメラを向けてください", "camDenied": "カメラを開けませんでした。ブラウザ設定でカメラへのアクセスを許可するか、写真を使ってください。"}};
+Object.keys(EXTRA7).forEach(k=>Object.assign(L[k],EXTRA7[k]));
 const EXTRA3={"en": {"foods": "Foods", "saveChanges": "Save changes", "delMeal": "Delete meal", "close": "Close", "updated": "Meal updated", "details": "Details", "confDel": "Delete this meal?"}, "es": {"foods": "Alimentos", "saveChanges": "Guardar cambios", "delMeal": "Borrar comida", "close": "Cerrar", "updated": "Comida actualizada", "details": "Detalles", "confDel": "¿Borrar esta comida?"}, "ja": {"foods": "食品", "saveChanges": "変更を保存", "delMeal": "食事を削除", "close": "閉じる", "updated": "更新しました", "details": "詳細", "confDel": "この食事を削除しますか？"}};
 Object.keys(EXTRA3).forEach(k=>Object.assign(L[k],EXTRA3[k]));
 Object.keys(EXTRA2).forEach(k=>{Object.assign(L[k],EXTRA2[k]);L[k].err=Object.assign({},L[k].err,ERRX[k])});
@@ -777,7 +798,7 @@ function route(){
   document.querySelectorAll('.tabbar a').forEach(a=>{if(a.dataset.t===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   scrollTo(0,0);
 }
-addEventListener('hashchange',route);
+addEventListener('hashchange',()=>{if(SC.on)stopScan();route()});
 async function showAuth(){
   S.me=null;document.body.classList.add('out');
   try{S.cfg=await (await fetch('/api/config')).json()}catch{}
@@ -1008,7 +1029,7 @@ function setMode(m){
   if(m==='search'){loadFoods().then(renderResults)}
   if(m==='fav')loadFavs();
 }
-$('modes').onclick=e=>{const b=e.target.closest('button');if(b)setMode(b.dataset.mode)};
+$('modes').onclick=e=>{const b=e.target.closest('button');if(!b)return;setMode(b.dataset.mode);if(b.dataset.mode==='barcode')startScan()};
 function openAdd(slot,mode){
   resetAdd();S.mtype=slot||defaultMeal();renderChips();setMode(mode||(S.me?.ai?'photo':'search'));location.hash='anadir';
 }
@@ -1057,7 +1078,7 @@ let zxingP=null;
 function loadZXing(){
   if(window.ZXing)return Promise.resolve(window.ZXing);
   return zxingP||(zxingP=new Promise((ok,no)=>{const sc=document.createElement('script');
-    sc.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';sc.onload=()=>ok(window.ZXing);sc.onerror=no;document.head.appendChild(sc)}));
+    sc.src='/static/zxing.min.js';sc.onload=()=>ok(window.ZXing);sc.onerror=no;document.head.appendChild(sc)}));
 }
 async function decodeBarcode(file){
   if('BarcodeDetector' in window){
@@ -1083,6 +1104,51 @@ $('bcFile').onchange=async e=>{
 };
 $('lookup').onclick=()=>lookupCode($('code').value);
 $('code').addEventListener('keydown',e=>{if(e.key==='Enter')lookupCode($('code').value)});
+
+
+/* ---------- live barcode scanner ---------- */
+const SC={stream:null,on:false,timer:null};
+async function startScan(){
+  if(SC.on)return;
+  if(!navigator.mediaDevices?.getUserMedia){$('bcFile').click();return}
+  try{SC.stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}})}
+  catch{$('bcStatus').textContent=t('camDenied');return}
+  SC.on=true;$('scanner').hidden=false;lockScroll();
+  const v=$('scanVideo');v.srcObject=SC.stream;try{await v.play()}catch{}
+  let det=null;
+  if('BarcodeDetector' in window){try{const f=await BarcodeDetector.getSupportedFormats();if(f.includes('ean_13'))det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']})}catch{}}
+  let Z=null,reader=null;
+  if(!det){try{Z=await loadZXing();const h=new Map();h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.EAN_13,Z.BarcodeFormat.EAN_8,Z.BarcodeFormat.UPC_A,Z.BarcodeFormat.UPC_E]);h.set(Z.DecodeHintType.TRY_HARDER,true);reader=new Z.MultiFormatReader();reader.setHints(h)}catch{stopScan();$('bcStatus').textContent=t('noCode');return}}
+  const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
+  const tick=async()=>{
+    if(!SC.on)return;
+    try{
+      if(v.readyState>=2&&v.videoWidth){
+        let code=null;
+        if(det){const r=await det.detect(v);code=r[0]?.rawValue}
+        else{
+          // read the band in the middle of the frame (where the viewfinder is)
+          const vw=v.videoWidth,vh=v.videoHeight,sw=vw*.9,sh=vh*.45,W=Math.min(960,sw);
+          cv.width=W;cv.height=Math.round(sh*W/sw);cx.drawImage(v,(vw-sw)/2,(vh-sh)/2,sw,sh,0,0,cv.width,cv.height);
+          try{code=reader.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))).getText()}catch{}
+        }
+        if(code){stopScan();try{navigator.vibrate?.(60)}catch{}lookupCode(code);return}
+      }
+    }catch{}
+    SC.timer=setTimeout(tick,180);
+  };
+  tick();
+}
+function stopScan(){
+  SC.on=false;clearTimeout(SC.timer);
+  if(SC.stream){SC.stream.getTracks().forEach(tr=>tr.stop());SC.stream=null}
+  $('scanVideo').srcObject=null;
+  if(!$('scanner').hidden){$('scanner').hidden=true;unlockScroll()}
+}
+$('scanLiveBtn').onclick=startScan;
+$('scanClose').onclick=stopScan;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&SC.on)stopScan()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&SC.on)stopScan()});
 
 /* ---------- favourites & recents ---------- */
 async function loadFavs(){
