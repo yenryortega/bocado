@@ -13,7 +13,8 @@
 <title>Bocado · calorías</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
-<script>try{var _t=localStorage.getItem('bocado:theme');if(_t&&_t!=='auto')document.documentElement.dataset.theme=_t}catch(e){}</script>
+<script>try{var _t=localStorage.getItem('bocado:theme');if(_t&&_t!=='auto')document.documentElement.dataset.theme=_t}catch(e){}
+try{if(navigator.standalone||matchMedia('(display-mode: standalone)').matches)document.documentElement.classList.add('pwa')}catch(e){}</script>
 <style>
 /* VOICE: sunny, upbeat, encouraging — a kitchen buddy you open three times a day
    IDEA: the day as a plate; meals fill it slot by slot like a lunch tray
@@ -26,6 +27,7 @@
 --band:linear-gradient(155deg,#3cc983 0%,#22a565 52%,#14917a 100%);
 --bad:light-dark(#c2283c,#ff8a96);--sh:light-dark(0 2px 0 rgba(30,120,70,.08),0 0 0 1px rgba(255,255,255,.04));--sh2:light-dark(0 10px 30px rgba(20,110,60,.18),0 8px 30px rgba(0,0,0,.55))}
 :root[data-theme=light]{color-scheme:light}
+.splash{display:none!important}html.pwa .splash{display:flex!important}
 .splash{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .4s ease,visibility .4s}
 .splash img{width:104px;height:104px;border-radius:26px;box-shadow:0 10px 30px rgba(20,145,90,.25);animation:spPulse 1.6s ease-in-out infinite}
 .splash b{font:900 30px Nunito,sans-serif;color:var(--org);letter-spacing:-.5px}
@@ -1463,7 +1465,7 @@ function hideSplash(){const sp=document.getElementById('splash');if(!sp)return;s
   let ok=false;
   try{const me=await api('/api/me');splashP(55);await enter(me);splashP(100);ok=true}
   catch(e){if(e.code!=='auth')showAuth()}
-  if(ok)await wait(Math.max(350,1000-(performance.now()-t0)));
+  if(ok&&document.documentElement.classList.contains('pwa'))await wait(Math.max(350,1000-(performance.now()-t0)));
   hideSplash();
 })();
 }
