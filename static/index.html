@@ -119,6 +119,12 @@ div.th svg{width:30px;height:30px;opacity:.85}
 .en{font-size:15px;font-weight:600;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
 .em{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
 .em b{color:var(--ink);font-weight:700}
+.dnav{display:flex;align-items:center;gap:8px}.dnav #dayClose{flex:1}
+.dnav .nb{width:48px;height:48px;padding:0;display:grid;place-items:center;flex:none}.dnav .nb svg{width:20px;height:20px}.dnav .nb:disabled{opacity:.3}
+.ew{position:relative;overflow:hidden;border-radius:14px}
+.ew .entry{position:relative;z-index:1;background:var(--card);touch-action:pan-y;transition:transform .2s ease}
+.swdel{position:absolute;right:0;top:0;bottom:0;width:88px;border:0;border-radius:14px;background:var(--berry);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 12px Inter,sans-serif;box-shadow:none;padding:0}
+.swdel svg{width:20px;height:20px}
 .del{width:44px;height:44px;padding:0;border:0;background:none;color:var(--mute);display:grid;place-items:center;box-shadow:none}
 .del svg{width:18px;height:18px}
 /* week */
@@ -215,7 +221,7 @@ table{font-size:14px}td input.g,td input.kt{width:62px}.hide-s{display:none}}
 .empty2{color:var(--mute);font-size:14px;padding:8px 0}
 /* meal detail sheet */
 .entry{cursor:pointer;border-radius:14px;transition:background .15s}
-.entry:hover{background:color-mix(in srgb,var(--org) 6%,transparent)}
+.entry:hover{background:color-mix(in srgb,var(--org) 6%,var(--card))}
 .sheet{position:fixed;inset:0;z-index:40;background:rgba(10,30,20,.45);display:flex;align-items:flex-end;justify-content:center;overscroll-behavior:contain;touch-action:none}
 .sheet[hidden]{display:none}
 .sbox{background:var(--card);width:min(560px,100%);max-height:88vh;max-height:88dvh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;border-radius:28px 28px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.25);animation:up .22s ease-out}
@@ -332,6 +338,7 @@ body.out #authBg{display:block}
   <symbol id="u-share" viewBox="0 0 24 24"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v6.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="u-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM18 14h2.5M14 18v2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="u-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+  <symbol id="u-chev" viewBox="0 0 24 24"><path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="u-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
  </g>
 </svg>
@@ -511,7 +518,7 @@ body.out #authBg{display:block}
     <div class="shd" id="dayHead" style="grid-template-columns:minmax(0,1fr) auto"></div>
     <div class="smac" id="dayMac"></div>
     <div id="dayMeals"></div>
-    <div class="sact"><button id="dayClose" data-i="close"></button></div>
+    <div class="sact dnav"><button type="button" class="x nb" id="dayPrev"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#u-chev"/></svg></button><button id="dayClose" data-i="close"></button><button type="button" class="x nb" id="dayNext"><svg aria-hidden="true"><use href="#u-chev"/></svg></button></div>
   </div>
 </div>
 <div class="sheet" id="sheet" hidden>
@@ -640,6 +647,7 @@ const EXTRA6={"en": {"qrShow": "QR code", "qrHide": "Hide QR code", "noMeals": "
 Object.keys(EXTRA6).forEach(k=>Object.assign(L[k],EXTRA6[k]));
 const EXTRA7={"en": {"scanHint2": "Opens the camera and reads the code automatically.", "usePhoto": "Use a photo instead", "scanLive": "Point the camera at the barcode", "camDenied": "Couldn't open the camera. Allow camera access in your browser settings, or use a photo."}, "es": {"scanHint2": "Abre la cámara y lee el código automáticamente.", "usePhoto": "Usar una foto", "scanLive": "Apunta la cámara al código de barras", "camDenied": "No pude abrir la cámara. Permite el acceso a la cámara en los ajustes del navegador o usa una foto."}, "ja": {"scanHint2": "カメラが開いて自動でコードを読み取ります。", "usePhoto": "写真を使う", "scanLive": "バーコードにカメラを向けてください", "camDenied": "カメラを開けませんでした。ブラウザ設定でカメラへのアクセスを許可するか、写真を使ってください。"}};
 Object.keys(EXTRA7).forEach(k=>Object.assign(L[k],EXTRA7[k]));
+const EXTRA8={en:{prevDay:'Previous day',nextDay:'Next day'},es:{prevDay:'Día anterior',nextDay:'Día siguiente'},ja:{prevDay:'前の日',nextDay:'次の日'}};Object.keys(EXTRA8).forEach(k=>Object.assign(L[k],EXTRA8[k]));
 const EXTRA3={"en": {"foods": "Foods", "saveChanges": "Save changes", "delMeal": "Delete meal", "close": "Close", "updated": "Meal updated", "details": "Details", "confDel": "Delete this meal?"}, "es": {"foods": "Alimentos", "saveChanges": "Guardar cambios", "delMeal": "Borrar comida", "close": "Cerrar", "updated": "Comida actualizada", "details": "Detalles", "confDel": "¿Borrar esta comida?"}, "ja": {"foods": "食品", "saveChanges": "変更を保存", "delMeal": "食事を削除", "close": "閉じる", "updated": "更新しました", "details": "詳細", "confDel": "この食事を削除しますか？"}};
 Object.keys(EXTRA3).forEach(k=>Object.assign(L[k],EXTRA3[k]));
 Object.keys(EXTRA2).forEach(k=>{Object.assign(L[k],EXTRA2[k]);L[k].err=Object.assign({},L[k].err,ERRX[k])});
@@ -743,9 +751,9 @@ function renderSlots(){
     return `<div class="slot" style="--c:${MCOL[k]}"><div class="sh"><span class="sic">${IC('i-'+k)}</span><b>${esc(nm)}</b>
       <span class="sk${ms.length?' has':''}">${ms.length?fmt(kc)+' kcal':'—'}</span>
       <button class="plus" data-slot="${k}" aria-label="${esc(t('slotAdd',{m:nm}))}">${IC('u-plus')}</button></div>
-      ${ms.map(m=>`<div class="entry" data-open="${m.id}" role="button" tabindex="0" aria-label="${esc(t('details'))}: ${esc(m.items.map(i=>i.n).join(', '))}">${m.thumb?`<img class="th" src="${esc(m.thumb)}" alt="">`:`<div class="th">${IC('i-'+(MEALK.includes(m.tipo)?m.tipo:'l'))}</div>`}
+      ${ms.map(m=>`<div class="ew"><button type="button" class="swdel" data-del="${m.id}" tabindex="-1" aria-hidden="true">${IC('u-trash')}<span>${esc(t('del'))}</span></button><div class="entry" data-open="${m.id}" role="button" tabindex="0" aria-label="${esc(t('details'))}: ${esc(m.items.map(i=>i.n).join(', '))}">${m.thumb?`<img class="th" src="${esc(m.thumb)}" alt="">`:`<div class="th">${IC('i-'+(MEALK.includes(m.tipo)?m.tipo:'l'))}</div>`}
         <div><div class="en">${esc(m.items.map(i=>i.n).join(', '))}</div><div class="em">${esc(m.hora)} · <b>${fmt(mealK(m))} kcal</b></div></div>
-        <button class="del" data-del="${m.id}" aria-label="${esc(t('del'))}">${IC('u-x')}</button></div>`).join('')}</div>`}).join('');
+        <button class="del" data-del="${m.id}" aria-label="${esc(t('del'))}">${IC('u-x')}</button></div></div>`).join('')}</div>`}).join('');
 }
 function renderWeek(){
   const c=calc(profile()), days=[];
@@ -904,7 +912,7 @@ $('fabFile').onchange=e=>{
 };
 $('slots').addEventListener('click',async e=>{
   const b=e.target.closest('button');
-  if(!b){const en=e.target.closest('.entry[data-open]');if(en)openMeal(en.dataset.open);return}
+  if(!b){const en=e.target.closest('.entry[data-open]');if(!en)return;if(en.classList.contains('open')||SW.justSwiped){closeSwipes();return}closeSwipes();openMeal(en.dataset.open);return}
   if(b.dataset.slot){openAdd(b.dataset.slot);return}
   if(b.dataset.del){
     e.stopPropagation();
@@ -953,7 +961,7 @@ function findMeal(id){
   for(const k of Object.keys(S.hist)){if((S.hist[k]||[]).some(x=>String(x.id)===String(id)))return {list:S.hist[k],key:k}}
   return null;
 }
-function openDay(k){S.dayK=k;renderDay();$('daySheet').hidden=false;lockScroll();document.querySelector('#daySheet .sbox').scrollTop=0;$('dayClose').focus({preventScroll:true})}
+function openDay(k){S.dayK=k;renderDay();updDayNav();$('daySheet').hidden=false;lockScroll();document.querySelector('#daySheet .sbox').scrollTop=0;$('dayClose').focus({preventScroll:true})}
 function closeDay(){if($('daySheet').hidden)return;$('daySheet').hidden=true;unlockScroll();S.dayK=null}
 function renderDay(){
   const k=S.dayK;if(!k)return;
@@ -987,18 +995,23 @@ function lockScroll(){S.scrollY=window.scrollY;const b=document.body.style;b.pos
 function unlockScroll(){const b=document.body.style;b.position=b.top=b.left=b.right=b.width=b.overflow='';window.scrollTo(0,S.scrollY||0)}
 function closeSheet(){if($('sheet').hidden)return;$('sheet').hidden=true;unlockScroll();S.cur=null}
 /* swipe down to close a bottom sheet */
-function swipeClose(sheetId,close){
-  const box=document.querySelector('#'+sheetId+' .sbox');let y0=null,dy=0,t0=0,drag=false;
+function swipeClose(sheetId,close,onH){
+  const box=document.querySelector('#'+sheetId+' .sbox');let y0=null,x0=0,dy=0,dx=0,t0=0,drag=false,hor=false;
   const reset=()=>{box.style.transition='transform .22s ease';box.style.transform='';y0=null;drag=false;dy=0};
   box.addEventListener('touchstart',e=>{
     if(e.touches.length!==1||e.target.closest('input,textarea,select'))return;
-    y0=e.touches[0].clientY;t0=Date.now();dy=0;drag=false;box.style.transition='none'},{passive:true});
+    y0=e.touches[0].clientY;x0=e.touches[0].clientX;t0=Date.now();dy=0;dx=0;drag=false;hor=false;box.style.transition='none'},{passive:true});
   box.addEventListener('touchmove',e=>{
-    if(y0==null)return;const d=e.touches[0].clientY-y0;
-    if(!drag){if(d>6&&box.scrollTop<=0)drag=true;else if(Math.abs(d)>6){y0=null;return}else return}
+    if(y0==null)return;const d=e.touches[0].clientY-y0, h=e.touches[0].clientX-x0;
+    if(hor){dx=h;box.style.transform=`translateX(${h*.35}px)`;e.preventDefault();return}
+    if(!drag){if(onH&&Math.abs(h)>10&&Math.abs(h)>Math.abs(d)*1.3){hor=true;return}
+      if(d>6&&box.scrollTop<=0)drag=true;else if(Math.abs(d)>6){y0=null;return}else return}
     dy=Math.max(0,d);box.style.transform=`translateY(${dy}px)`;e.preventDefault()},{passive:false});
   const end=()=>{
-    if(y0==null)return;if(!drag){y0=null;return}
+    if(y0==null)return;
+    if(hor){const dir=dx<0?1:-1;y0=null;hor=false;
+      if(Math.abs(dx)>60&&onH(dir)){slideIn(box,dir)}else{box.style.transition='transform .2s ease';box.style.transform=''}return}
+    if(!drag){y0=null;return}
     const fast=dy>40&&dy/(Date.now()-t0)>0.5;
     if(dy>Math.min(140,box.offsetHeight*.25)||fast){
       box.style.transition='transform .2s ease';box.style.transform='translateY(100%)';
@@ -1006,7 +1019,38 @@ function swipeClose(sheetId,close){
     }else reset()};
   box.addEventListener('touchend',end);box.addEventListener('touchcancel',reset);
 }
-swipeClose('daySheet',closeDay);swipeClose('sheet',closeSheet);
+swipeClose('daySheet',closeDay,dir=>shiftDay(dir));swipeClose('sheet',closeSheet);
+function dayAdd(k,n){const [y,m,d]=k.split('-').map(Number);return dkey(new Date(y,m-1,d+n))}
+function updDayNav(){const k=S.dayK;if(!k)return;$('dayPrev').setAttribute('aria-label',t('prevDay'));$('dayNext').setAttribute('aria-label',t('nextDay'));$('dayPrev').disabled=k<=dayAdd(TODAY,-6);$('dayNext').disabled=k>=TODAY}
+function shiftDay(dir){
+  const k=S.dayK;if(!k)return false;const n=dayAdd(k,dir);
+  if(n>TODAY||n<dayAdd(TODAY,-6))return false;
+  S.dayK=n;renderDay();updDayNav();document.querySelector('#daySheet .sbox').scrollTop=0;return true;
+}
+$('dayPrev').onclick=()=>{const b=document.querySelector('#daySheet .sbox');if(shiftDay(-1))slideIn(b,-1)};
+$('dayNext').onclick=()=>{const b=document.querySelector('#daySheet .sbox');if(shiftDay(1))slideIn(b,1)};
+function slideIn(box,dir){box.style.transition='none';box.style.transform=`translateX(${dir*40}px)`;box.style.opacity='.4';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{box.style.transition='transform .22s ease,opacity .22s ease';box.style.transform='';box.style.opacity=''}))}
+/* swipe left on a meal to reveal Delete */
+const SW={el:null,x0:0,y0:0,dx:0,mode:null,justSwiped:false};
+function closeSwipes(except){document.querySelectorAll('#slots .entry.open').forEach(e=>{if(e!==except){e.classList.remove('open');e.style.transform=''}})}
+$('slots').addEventListener('touchstart',e=>{
+  const en=e.target.closest('.entry');if(!en||e.touches.length!==1)return;
+  SW.el=en;SW.x0=e.touches[0].clientX;SW.y0=e.touches[0].clientY;SW.dx=0;SW.mode=null;SW.base=en.classList.contains('open')?-88:0;en.style.transition='none'},{passive:true});
+$('slots').addEventListener('touchmove',e=>{
+  if(!SW.el)return;const dx=e.touches[0].clientX-SW.x0, dy=e.touches[0].clientY-SW.y0;
+  if(!SW.mode){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;SW.mode=Math.abs(dx)>Math.abs(dy)?'h':'v';if(SW.mode==='h')closeSwipes(SW.el)}
+  if(SW.mode!=='h')return;e.preventDefault();
+  SW.dx=dx;SW.el.style.transform=`translateX(${Math.min(0,Math.max(-120,SW.base+dx))}px)`},{passive:false});
+const swEnd=()=>{
+  const en=SW.el;if(!en)return;en.style.transition='';
+  if(SW.mode==='h'){const pos=SW.base+SW.dx, open=pos<-44;en.classList.toggle('open',open);en.style.transform=open?'translateX(-88px)':'';
+    SW.justSwiped=true;setTimeout(()=>SW.justSwiped=false,350)}
+  SW.el=null;SW.mode=null};
+$('slots').addEventListener('touchend',swEnd);$('slots').addEventListener('touchcancel',swEnd);
+document.addEventListener('touchstart',e=>{if(!e.target.closest('#slots .ew'))closeSwipes()},{passive:true});
+/* tapping the tab you are already on just scrolls to the top (no extra history entry) */
+document.querySelector('.tabbar').addEventListener('click',e=>{const a=e.target.closest('a[data-t]');if(a&&a.getAttribute('aria-current')==='page'){e.preventDefault();scrollTo({top:0,behavior:'smooth'})}});
 function renderSheet(){
   const c=S.cur;if(!c)return;
   const tot=dayTot([{items:c.items}]), k=c.tipo, col=MCOL[k]||MCOL.l;
