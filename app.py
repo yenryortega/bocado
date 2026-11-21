@@ -60,6 +60,7 @@ class User(db.Model):
     lang = db.Column(db.String(5), nullable=False, default="en")
     profile = db.Column(db.JSON)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    avatar = db.Column(db.Text)  # small square JPEG data URL
     created = db.Column(db.DateTime, default=dt.datetime.utcnow)
 
 
@@ -105,6 +106,9 @@ with app.app_context():
     if "thumb" not in {c["name"] for c in db.inspect(db.engine).get_columns("meals")}:
         with db.engine.begin() as conn:
             conn.execute(db.text("ALTER TABLE meals ADD COLUMN thumb TEXT"))
+    if "avatar" not in {c["name"] for c in db.inspect(db.engine).get_columns("users")}:
+        with db.engine.begin() as conn:
+            conn.execute(db.text("ALTER TABLE users ADD COLUMN avatar TEXT"))
 
 
 # ---------------------------------------------------------------- helpers
@@ -148,7 +152,7 @@ def ai_enabled():
 
 def me_json(u):
     return {"ai": ai_enabled(),
-        "email": u.email, "name": u.name, "lang": u.lang, "profile": u.profile,
+        "email": u.email, "name": u.name, "lang": u.lang, "profile": u.profile, "avatar": u.avatar,
         "is_admin": u.is_admin, "photos_today": photos_today(u),
         "invite": (SIGNUP_CODE or None) if u.is_admin else None,
         "photo_limit": None if u.is_admin else DAILY_PHOTO_LIMIT,
@@ -295,6 +299,14 @@ def me(u):
 @login_required
 def update_me(u):
     d = request.get_json(silent=True) or {}
+    if "avatar" in d:
+        a = d["avatar"]
+        if a is None or a == "":
+            u.avatar = None
+        elif isinstance(a, str) and a.startswith("data:image/jpeg;base64,") and len(a) < 120000:
+            u.avatar = a
+        else:
+            return err("bad_avatar")
     if "lang" in d and d["lang"] in ("es", "en", "ja"):
         u.lang = d["lang"]
     if "name" in d:

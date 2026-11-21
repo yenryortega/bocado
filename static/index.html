@@ -200,7 +200,13 @@ td input.kt{width:80px;text-align:right;font-weight:700}
 .chips button.on{background:color-mix(in srgb,var(--c) 22%,var(--card));border-color:var(--c);color:var(--ink)}
 /* settings */
 .acct{display:flex;gap:14px;align-items:center}
-.av{width:56px;height:56px;flex:none;border-radius:50%;background:var(--band);color:#fff;display:grid;place-items:center;font:900 24px Nunito,sans-serif}
+.av{width:56px;height:56px;flex:none;border-radius:50%;background:var(--band);color:#fff;display:grid;place-items:center;font:900 24px Nunito,sans-serif;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.avw{position:relative;flex:none}
+.avcam{position:absolute;right:-4px;bottom:-4px;width:26px;height:26px;border-radius:50%;background:var(--card);color:var(--org);display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.18);cursor:pointer;border:2px solid var(--card)}
+.avcam svg{width:15px;height:15px}.avcam input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.avcam:focus-within{outline:3px solid var(--sun)}
+.avrm{font-size:13px;padding:0;min-height:0;margin-top:4px}
 .pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:light-dark(#e3f6ea,#173222);color:light-dark(#1e7a45,#7fd59e);margin-top:4px}
 .formula{display:grid;gap:6px;font-variant-numeric:tabular-nums}
 .formula div{display:flex;justify-content:space-between;gap:12px;border-bottom:1.5px dashed var(--line);padding:4px 0}
@@ -485,7 +491,7 @@ body.out #authBg{display:block}
 
   <section id="v-ajustes" hidden>
     <div class="card">
-      <div class="acct"><div class="av" id="av">?</div><div><b id="acctName"></b><br><span class="muted" id="acctEmail"></span><br><span class="pill" id="acctPill"></span></div></div>
+      <div class="acct"><div class="avw"><div class="av" id="av">?</div><label class="avcam" id="avCam"><input type="file" id="avFile" accept="image/*"><svg aria-hidden="true"><use href="#u-cam"/></svg></label></div><div><b id="acctName"></b><br><span class="muted" id="acctEmail"></span><br><span class="pill" id="acctPill"></span><br><button type="button" class="linkbtn avrm" id="avRm" hidden></button></div></div>
       <p class="note" id="shareTxt" data-i="shareTxt" hidden></p>
       <div class="row"><button id="logout" class="danger" style="color:var(--ink)"><svg class="ic" aria-hidden="true"><use href="#u-out"/></svg><span data-i="logout"></span></button></div>
     </div>
@@ -689,7 +695,7 @@ const EXTRA6={"en": {"qrShow": "QR code", "qrHide": "Hide QR code", "noMeals": "
 Object.keys(EXTRA6).forEach(k=>Object.assign(L[k],EXTRA6[k]));
 const EXTRA7={"en": {"scanHint2": "Opens the camera and reads the code automatically.", "usePhoto": "Use a photo instead", "scanLive": "Point the camera at the barcode", "camDenied": "Couldn't open the camera. Allow camera access in your browser settings, or use a photo."}, "es": {"scanHint2": "Abre la cámara y lee el código automáticamente.", "usePhoto": "Usar una foto", "scanLive": "Apunta la cámara al código de barras", "camDenied": "No pude abrir la cámara. Permite el acceso a la cámara en los ajustes del navegador o usa una foto."}, "ja": {"scanHint2": "カメラが開いて自動でコードを読み取ります。", "usePhoto": "写真を使う", "scanLive": "バーコードにカメラを向けてください", "camDenied": "カメラを開けませんでした。ブラウザ設定でカメラへのアクセスを許可するか、写真を使ってください。"}};
 Object.keys(EXTRA7).forEach(k=>Object.assign(L[k],EXTRA7[k]));
-const EXTRA8={en:{swipeHint:'Swipe sideways to change day · down to close'},es:{swipeHint:'Desliza a los lados para cambiar de día · hacia abajo para cerrar'},ja:{swipeHint:'左右にスワイプで日を切り替え・下にスワイプで閉じる'}};Object.keys(EXTRA8).forEach(k=>Object.assign(L[k],EXTRA8[k]));
+const EXTRA8={en:{avAdd:'Add a profile photo',avChange:'Change profile photo',avRemove:'Remove photo',avSaved:'Profile photo saved',avErr:"Couldn't save the photo",swipeHint:'Swipe sideways to change day · down to close'},es:{avAdd:'Añadir foto de perfil',avChange:'Cambiar foto de perfil',avRemove:'Quitar foto',avSaved:'Foto de perfil guardada',avErr:'No se pudo guardar la foto',swipeHint:'Desliza a los lados para cambiar de día · hacia abajo para cerrar'},ja:{avAdd:'プロフィール写真を追加',avChange:'プロフィール写真を変更',avRemove:'写真を削除',avSaved:'プロフィール写真を保存しました',avErr:'写真を保存できませんでした',swipeHint:'左右にスワイプで日を切り替え・下にスワイプで閉じる'}};Object.keys(EXTRA8).forEach(k=>Object.assign(L[k],EXTRA8[k]));
 const EXTRA3={"en": {"foods": "Foods", "saveChanges": "Save changes", "delMeal": "Delete meal", "close": "Close", "updated": "Meal updated", "details": "Details", "confDel": "Delete this meal?"}, "es": {"foods": "Alimentos", "saveChanges": "Guardar cambios", "delMeal": "Borrar comida", "close": "Cerrar", "updated": "Comida actualizada", "details": "Detalles", "confDel": "¿Borrar esta comida?"}, "ja": {"foods": "食品", "saveChanges": "変更を保存", "delMeal": "食事を削除", "close": "閉じる", "updated": "更新しました", "details": "詳細", "confDel": "この食事を削除しますか？"}};
 Object.keys(EXTRA3).forEach(k=>Object.assign(L[k],EXTRA3[k]));
 Object.keys(EXTRA2).forEach(k=>{Object.assign(L[k],EXTRA2[k]);L[k].err=Object.assign({},L[k].err,ERRX[k])});
@@ -839,7 +845,7 @@ function renderFormula(){
 function renderAcct(){
   if(!S.me)return;
   renderShare();
-  $('av').textContent=(S.me.name||S.me.email||'?').trim().charAt(0).toUpperCase();
+  renderAvatar();
   $('acctName').textContent=S.me.name;$('acctEmail').textContent=S.me.email;
   $('acctPill').textContent=S.me.is_admin?t('admin'):t('member',{l:S.me.photo_limit});
   $('shareTxt').hidden=!S.me.is_admin;
@@ -963,6 +969,18 @@ $('slots').addEventListener('click',async e=>{
     try{await api('/api/meals/'+id,{method:'DELETE'});S.day.meals=S.day.meals.filter(m=>String(m.id)!==id);renderAll()}catch{}
   }
 });
+function renderAvatar(){
+  if(!S.me)return;const a=S.me.avatar;
+  $('av').innerHTML=a?`<img src="${esc(a)}" alt="">`:esc((S.me.name||S.me.email||'?').trim().charAt(0).toUpperCase());
+  $('avCam').setAttribute('aria-label',t(a?'avChange':'avAdd'));$('avRm').hidden=!a;$('avRm').textContent=t('avRemove');
+}
+$('avFile').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const url=(await draw(f,256,true)).toDataURL('image/jpeg',.8);
+    S.me=await api('/api/me',{method:'PUT',body:{avatar:url}});renderAvatar();toast(t('avSaved'))}
+  catch(err){toast(t('avErr'))}
+};
+$('avRm').onclick=async()=>{try{S.me=await api('/api/me',{method:'PUT',body:{avatar:null}});renderAvatar()}catch{}};
 async function draw(f,max,square){
   const bmp=await createImageBitmap(f,{imageOrientation:'from-image'});
   let sx=0,sy=0,sw=bmp.width,sh=bmp.height;
