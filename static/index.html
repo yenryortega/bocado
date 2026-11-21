@@ -986,6 +986,27 @@ function openMeal(id){
 function lockScroll(){S.scrollY=window.scrollY;const b=document.body.style;b.position='fixed';b.top=`-${S.scrollY}px`;b.left='0';b.right='0';b.width='100%';b.overflow='hidden'}
 function unlockScroll(){const b=document.body.style;b.position=b.top=b.left=b.right=b.width=b.overflow='';window.scrollTo(0,S.scrollY||0)}
 function closeSheet(){if($('sheet').hidden)return;$('sheet').hidden=true;unlockScroll();S.cur=null}
+/* swipe down to close a bottom sheet */
+function swipeClose(sheetId,close){
+  const box=document.querySelector('#'+sheetId+' .sbox');let y0=null,dy=0,t0=0,drag=false;
+  const reset=()=>{box.style.transition='transform .22s ease';box.style.transform='';y0=null;drag=false;dy=0};
+  box.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1||e.target.closest('input,textarea,select'))return;
+    y0=e.touches[0].clientY;t0=Date.now();dy=0;drag=false;box.style.transition='none'},{passive:true});
+  box.addEventListener('touchmove',e=>{
+    if(y0==null)return;const d=e.touches[0].clientY-y0;
+    if(!drag){if(d>6&&box.scrollTop<=0)drag=true;else if(Math.abs(d)>6){y0=null;return}else return}
+    dy=Math.max(0,d);box.style.transform=`translateY(${dy}px)`;e.preventDefault()},{passive:false});
+  const end=()=>{
+    if(y0==null)return;if(!drag){y0=null;return}
+    const fast=dy>40&&dy/(Date.now()-t0)>0.5;
+    if(dy>Math.min(140,box.offsetHeight*.25)||fast){
+      box.style.transition='transform .2s ease';box.style.transform='translateY(100%)';
+      setTimeout(()=>{close();box.style.transition='none';box.style.transform=''},190);y0=null;drag=false;
+    }else reset()};
+  box.addEventListener('touchend',end);box.addEventListener('touchcancel',reset);
+}
+swipeClose('daySheet',closeDay);swipeClose('sheet',closeSheet);
 function renderSheet(){
   const c=S.cur;if(!c)return;
   const tot=dayTot([{items:c.items}]), k=c.tipo, col=MCOL[k]||MCOL.l;
