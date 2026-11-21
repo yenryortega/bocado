@@ -70,7 +70,7 @@ body.out .pics{display:flex}body.out .pc .big,body.out .pc small{display:none}
 .mt .bar{background:rgba(255,255,255,.4)}
 .arcs{transition:stroke-dasharray .6s ease,stroke-dashoffset .6s ease}
 .smac>div.m0{box-shadow:inset 3px 0 0 var(--mp)}.smac>div.m1{box-shadow:inset 3px 0 0 var(--mc)}.smac>div.m2{box-shadow:inset 3px 0 0 var(--mf)}
-.upl{display:flex;justify-content:center;margin-top:10px}
+.upl{display:flex;justify-content:flex-start;margin-top:10px}
 body.compact .hero{display:none}
 body.compact .band{padding-bottom:18px}
 body.out .mac,body.out .tabbar,body.out .chip{display:none}
@@ -127,7 +127,13 @@ div.th svg{width:30px;height:30px;opacity:.85}
 .wk .col:hover i{filter:brightness(.95)}
 .wk .col:focus-visible{outline:3px solid var(--sun)}
 .wk i{width:100%;max-width:30px;border-radius:10px 10px 5px 5px;background:light-dark(#bfe8d0,#1f4a33);min-height:4px}
-.wk i.today{background:var(--org)}.wk i.over{background:var(--berry)}.wk i.zero{background:var(--line)}
+.wk i.zero{background:var(--line)}
+.wk i.stk{display:flex;flex-direction:column-reverse;overflow:hidden;background:none;gap:2px}
+.wk i.stk b{display:block;width:100%;flex:none}
+.wk i.stk b:nth-child(1){background:var(--mp)}.wk i.stk b:nth-child(2){background:var(--mc)}.wk i.stk b:nth-child(3){background:var(--mf)}
+.wk i.over{outline:2.5px solid var(--berry);outline-offset:2px}
+.wk .col .v.over{color:var(--berry);font-weight:800}
+.wk .col.today .v{font-weight:800}
 .wk .v{position:absolute;bottom:calc(var(--h) + 4px);font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
 .tl{position:absolute;left:0;right:0;border-top:2px dashed light-dark(rgba(43,29,20,.25),rgba(251,239,228,.3));pointer-events:none}
 .tl span{position:absolute;right:0;top:-20px;font-size:11px;color:var(--mute);background:var(--card);padding:0 4px}
@@ -543,7 +549,7 @@ subLeft:'Para llegar a tu meta de hoy.',subOver:'No pasa nada por un día; mira 
 noProfSub:'Con edad, peso, estatura y actividad calculo cuántas calorías necesitas al día.',mac:['Proteína','Hidratos','Grasa'],
 welcome:'Tus calorías, con una foto',welcomeSub:'Inicia sesión para ver tu meta y tus comidas.',
 mealsToday:'Comidas de hoy',addDish:'+ Añadir plato',empty:'Aún no has registrado nada hoy.<br>Haz una foto a tu próximo plato.',last7:'Últimos 7 días',
-weekNote:'Barra coral: día por encima de tu meta. Importa la tendencia, no un día suelto.',del:'Borrar',photo:'Foto del plato',tapPhoto:'Toca para hacer una foto',
+weekNote:'Coral: proteína · amarillo: hidratos · azul: grasa. Barra con borde: día por encima de tu meta.',del:'Borrar',photo:'Foto del plato',tapPhoto:'Toca para hacer una foto',
 orGallery:'Cámara o galería de fotos',descLbl:'Descripción o detalles (opcional)',descPh:'Ej.: con 1 cucharada de aceite; o sin foto: 2 onigiri de atún y sopa de miso',
 calc:'Calcular calorías',cancel:'Cancelar',manual:'o añadir a mano',analyzing:'Analizando el plato… (10–40 s)',result:'Resultado',fixGrams:'Ajusta los gramos o las kcal de cualquier alimento. ¿Falta algo? Búscalo abajo.',
 thFood:'Alimento',thG:'Gramos',total:'Total',addFood:'+ Añadir alimento',meal:'Comida',meals:['Desayuno','Almuerzo','Merienda','Cena','Snack'],saveToday:'Guardar en hoy',
@@ -569,7 +575,7 @@ subLeft:'To reach today’s target.',subOver:'One day is fine — look at the wh
 noProfSub:'From age, weight, height and activity I work out how many calories you need a day.',mac:['Protein','Carbs','Fat'],
 welcome:'Your calories, from a photo',welcomeSub:'Sign in to see your target and meals.',
 mealsToday:'Today’s meals',addDish:'+ Add a dish',empty:'Nothing logged today yet.<br>Snap your next dish.',last7:'Last 7 days',
-weekNote:'Coral bar: a day above your target. The trend matters, not a single day.',del:'Delete',photo:'Dish photo',tapPhoto:'Tap to take a photo',
+weekNote:'Coral: protein · yellow: carbs · blue: fat. Outlined bar: a day above your target.',del:'Delete',photo:'Dish photo',tapPhoto:'Tap to take a photo',
 orGallery:'Camera or photo library',descLbl:'Description or details (optional)',descPh:'E.g. with 1 tbsp of oil; or without a photo: 2 tuna onigiri and miso soup',
 calc:'Work out calories',cancel:'Cancel',manual:'or add by hand',analyzing:'Analysing the dish… (10–40 s)',result:'Result',fixGrams:'Adjust the grams or the kcal of any food if needed. Missing something? Search it below.',
 thFood:'Food',thG:'Grams',total:'Total',addFood:'+ Add food',meal:'Meal',meals:['Breakfast','Lunch','Afternoon snack','Dinner','Snack'],saveToday:'Save to today',
@@ -595,7 +601,7 @@ subLeft:'今日の目標まで。',subOver:'1日くらい大丈夫。1週間で�
 noProfSub:'年齢・体重・身長・活動量から1日に必要なカロリーを計算します。',mac:['たんぱく質','炭水化物','脂質'],
 welcome:'写真でカロリー管理',welcomeSub:'ログインして目標と食事を確認しましょう。',
 mealsToday:'今日の食事',addDish:'+ 料理を追加',empty:'今日はまだ記録がありません。<br>次の料理を撮ってみましょう。',last7:'過去7日間',
-weekNote:'コーラル：目標を超えた日。大切なのは1日ではなく傾向です。',del:'削除',photo:'料理の写真',tapPhoto:'タップして撮影',
+weekNote:'コーラル：たんぱく質・黄：炭水化物・青：脂質。枠付きの棒：目標を超えた日。',del:'削除',photo:'料理の写真',tapPhoto:'タップして撮影',
 orGallery:'カメラまたは写真ライブラリ',descLbl:'説明・補足（任意）',descPh:'例：油大さじ1使用／写真なし：ツナおにぎり2個と味噌汁',
 calc:'カロリーを計算',cancel:'キャンセル',manual:'または手動で追加',analyzing:'料理を分析中…（10〜40秒）',result:'結果',fixGrams:'必要に応じてグラムやkcalを修正できます。足りない食品は下で検索して追加。',
 thFood:'食品',thG:'グラム',total:'合計',addFood:'+ 食品を追加',meal:'食事',meals:['朝食','昼食','おやつ','夕食','間食'],saveToday:'今日に保存',
@@ -618,11 +624,11 @@ confDay:'今日の食事をすべて削除しますか？',confAll:'プロフィ
 loadErr:'データを読み込めませんでした。接続を確認して再読み込みしてください。',days:['日','月','火','水','木','金','土']}};
 const EXTRA={
 es:{authTag:'Haz una foto a tu plato y descubre sus calorías. Llega a tu meta diaria sin hacer cuentas.',streak1:'1 día',streakN:'{n} días seguidos',streak0:'Empieza tu racha hoy',slotAdd:'Añadir a {m}',snap:'Hacer foto del plato',goal:'Objetivo',targetLbl:'meta',
-savedLeft:'Guardado · te quedan {n} kcal',savedOver:'Guardado · {n} kcal por encima',tapPhoto:'Toca para hacer una foto',orGallery:'Se abre la cámara',uploadPhoto:'Subir una foto',retry:'Volver a calcular'},
+savedLeft:'Guardado · te quedan {n} kcal',savedOver:'Guardado · {n} kcal por encima',tapPhoto:'Toca para hacer una foto',orGallery:'Se abre la cámara',uploadPhoto:'Mejor sube una foto',retry:'Volver a calcular'},
 en:{authTag:'Snap your plate and see its calories. Hit your daily target without doing the maths.',streak1:'1 day',streakN:'{n}-day streak',streak0:'Start your streak today',slotAdd:'Add to {m}',snap:'Snap your dish',targetLbl:'target',
-savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'Tap to take a photo',orGallery:'Opens the camera',uploadPhoto:'Upload a photo',retry:'Work it out again'},
+savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'Tap to take a photo',orGallery:'Opens the camera',uploadPhoto:'Upload a photo instead',retry:'Work it out again'},
 ja:{authTag:'料理を撮るだけでカロリーがわかる。計算なしで毎日の目標を達成。',streak1:'1日',streakN:'{n}日連続',streak0:'今日から連続記録を',slotAdd:'{m}に追加',snap:'料理を撮影',targetLbl:'目標',
-savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'タップして撮影',orGallery:'カメラが起動します',uploadPhoto:'写真をアップロード',retry:'もう一度計算'}};
+savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'タップして撮影',orGallery:'カメラが起動します',uploadPhoto:'写真をアップロードする',retry:'もう一度計算'}};
 Object.keys(EXTRA).forEach(k=>Object.assign(L[k],EXTRA[k]));
 const EXTRA2={"en": {"modePhoto": "Photo", "modeSearch": "Search", "modeBarcode": "Barcode", "modeFav": "Favorites", "searchPh": "Rice, chicken, banana…", "searchEmpty": "No matches. Add it by hand.", "foodsNote": "Approximate values from standard food tables.", "addTo": "Add", "scanBtn": "Scan a barcode", "scanHint": "Take a clear photo of the barcode on the package.", "codePh": "Or type the number", "lookup": "Look up", "scanning": "Reading barcode…", "noCode": "Couldn't read the barcode. Try a sharper photo or type the number.", "favs": "Favorites", "recents": "Recent", "noFavs": "Save a meal as a favorite to add it in one tap.", "noRecents": "Your recent meals will show up here.", "saveFav": "Save as favorite", "favName": "Favorite name", "favSaveBtn": "Save", "favSaved": "Saved to favorites", "added": "Added: {n}", "myMeal": "Your meal", "theme": "Theme", "thAuto": "Auto", "thLight": "Light", "thDark": "Dark"}, "es": {"modePhoto": "Foto", "modeSearch": "Buscar", "modeBarcode": "Código", "modeFav": "Favoritos", "searchPh": "Arroz, pollo, plátano…", "searchEmpty": "Sin resultados. Añádelo a mano.", "foodsNote": "Valores aproximados de tablas de composición.", "addTo": "Añadir", "scanBtn": "Escanear código de barras", "scanHint": "Haz una foto nítida del código del envase.", "codePh": "O escribe el número", "lookup": "Buscar", "scanning": "Leyendo código…", "noCode": "No pude leer el código. Prueba con otra foto o escribe el número.", "favs": "Favoritos", "recents": "Recientes", "noFavs": "Guarda una comida como favorita para añadirla con un toque.", "noRecents": "Aquí aparecerán tus comidas recientes.", "saveFav": "Guardar como favorito", "favName": "Nombre del favorito", "favSaveBtn": "Guardar", "favSaved": "Guardado en favoritos", "added": "Añadido: {n}", "myMeal": "Tu comida", "theme": "Tema", "thAuto": "Automático", "thLight": "Claro", "thDark": "Oscuro"}, "ja": {"modePhoto": "写真", "modeSearch": "検索", "modeBarcode": "バーコード", "modeFav": "お気に入り", "searchPh": "ごはん、鶏肉、バナナ…", "searchEmpty": "見つかりません。手動で追加してください。", "foodsNote": "食品成分表に基づくおおよその値です。", "addTo": "追加", "scanBtn": "バーコードを読み取る", "scanHint": "パッケージのバーコードをはっきり撮影してください。", "codePh": "または番号を入力", "lookup": "検索", "scanning": "読み取り中…", "noCode": "バーコードを読み取れませんでした。別の写真を試すか番号を入力してください。", "favs": "お気に入り", "recents": "最近", "noFavs": "食事をお気に入りに保存すると、ワンタップで追加できます。", "noRecents": "最近の食事がここに表示されます。", "saveFav": "お気に入りに保存", "favName": "お気に入りの名前", "favSaveBtn": "保存", "favSaved": "お気に入りに保存しました", "added": "追加しました：{n}", "myMeal": "あなたの食事", "theme": "テーマ", "thAuto": "自動", "thLight": "ライト", "thDark": "ダーク"}};
 const ERRX={"en": {"not_found": "Product not found in Open Food Facts.", "no_nutrition": "That product has no calorie data.", "lookup_failed": "Couldn't reach Open Food Facts. Try again.", "bad_code": "Enter a valid barcode number.", "ai_off": "Photo analysis is not set up.", "bad_fav": "Add at least one food first.", "too_many_favs": "You have too many favorites. Delete some first."}, "es": {"not_found": "Producto no encontrado en Open Food Facts.", "no_nutrition": "Ese producto no tiene datos de calorías.", "lookup_failed": "No pude conectar con Open Food Facts. Inténtalo de nuevo.", "bad_code": "Escribe un código de barras válido.", "ai_off": "El análisis de fotos no está configurado.", "bad_fav": "Añade al menos un alimento primero.", "too_many_favs": "Tienes demasiados favoritos. Borra alguno."}, "ja": {"not_found": "Open Food Factsに商品が見つかりません。", "no_nutrition": "この商品にはカロリー情報がありません。", "lookup_failed": "Open Food Factsに接続できません。もう一度お試しください。", "bad_code": "正しいバーコード番号を入力してください。", "ai_off": "写真分析は設定されていません。", "bad_fav": "まず食品を1つ以上追加してください。", "too_many_favs": "お気に入りが多すぎます。いくつか削除してください。"}};
@@ -744,11 +750,13 @@ function renderSlots(){
 function renderWeek(){
   const c=calc(profile()), days=[];
   for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d)}
-  const vals=days.map(d=>{const k=dkey(d);return dayTot(k===TODAY?S.day.meals:S.hist[k]).k});
+  const tots=days.map(d=>{const k=dkey(d);return dayTot(k===TODAY?S.day.meals:S.hist[k])}), vals=tots.map(x=>x.k);
   const max=Math.max((c?.meta||0)*1.15,...vals,1);
   $('wk').innerHTML=days.map((d,i)=>{const v=vals[i],h=Math.max(3,v/max*100),k=dkey(d);
-    const cls=!v?'zero':(c&&v>c.meta?'over':(k===TODAY?'today':''));
-    return `<button type="button" class="col" data-day="${k}" style="--h:${h}%" aria-label="${esc(d.toLocaleDateString(LOC[S.lang],{weekday:'long',day:'numeric',month:'long'}))}: ${r0(v)} kcal"><span class="v">${v?r0(v):''}</span><i class="${cls}" style="height:${h}%"></i></button>`}).join('')
+    const over=!!(c&&v>c.meta), x=tots[i], m=[x.p*4,x.c*4,x.f*9], mt=m[0]+m[1]+m[2];
+    const segs=mt>0?m.map(a=>`<b style="flex-basis:${(a/mt*100).toFixed(1)}%"></b>`).join(''):'';
+    const cls=!v?'zero':(mt>0?'stk':'')+(over?' over':'');
+    return `<button type="button" class="col${k===TODAY?' today':''}" data-day="${k}" style="--h:${h}%" aria-label="${esc(d.toLocaleDateString(LOC[S.lang],{weekday:'long',day:'numeric',month:'long'}))}: ${r0(v)} kcal"><span class="v${over?' over':''}">${v?r0(v):''}</span><i class="${cls}" style="height:${h}%">${segs}</i></button>`}).join('')
     +(c?`<div class="tl" style="bottom:${c.meta/max*100}%"><span>${t('targetLbl')} ${fmt(c.meta)}</span></div>`:'');
   $('wl').innerHTML=days.map(d=>`<span class="${dkey(d)===TODAY?'t':''}">${T().days[d.getDay()]}</span>`).join('');
 }
