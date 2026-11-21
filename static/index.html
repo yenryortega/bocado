@@ -119,8 +119,18 @@ div.th svg{width:30px;height:30px;opacity:.85}
 .en{font-size:15px;font-weight:600;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
 .em{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
 .em b{color:var(--ink);font-weight:700}
-.dnav{display:flex;align-items:center;gap:8px}.dnav #dayClose{flex:1}
-.dnav .nb{width:48px;height:48px;padding:0;display:grid;place-items:center;flex:none}.dnav .nb svg{width:20px;height:20px}.dnav .nb:disabled{opacity:.3}
+#daySheet .sbox{height:100vh;height:100dvh;max-height:none;width:100%;max-width:640px;border-radius:0;padding:calc(8px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom))}
+@media(min-width:700px){#daySheet{align-items:stretch}#daySheet .sbox{border-radius:0}}
+.dtop{position:relative;height:40px}.dtop .grab{position:absolute;left:50%;top:6px;transform:translateX(-50%);margin:0}
+.dx{position:absolute;right:-6px;top:0;width:40px;height:40px;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--ink,inherit);box-shadow:none;border:0}
+.dx svg{width:18px;height:18px}
+.dtitle{text-align:center;font-size:22px;margin:4px 0 6px}
+.dots{display:flex;justify-content:center;gap:6px;margin-bottom:10px}.dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .2s}.dots i.on{width:20px;border-radius:4px;background:var(--org)}
+.dring{position:relative;width:min(68vw,270px);aspect-ratio:1;margin:6px auto 0}.dring svg{width:100%;height:100%;display:block}
+.dc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dc b{font:900 46px Nunito,sans-serif;line-height:1;font-variant-numeric:tabular-nums}.dc small{color:var(--mute);margin-top:4px;font-size:14px}
+.dsub{text-align:center;font:800 17px Nunito,sans-serif;margin:12px 0 0}.dsub.over{color:var(--berry)}
+.dhint{text-align:center;color:var(--mute);font-size:12px;margin:18px 0 0}
 .ew{position:relative;overflow:hidden;border-radius:14px}
 .ew .entry{position:relative;z-index:1;background:var(--card);touch-action:pan-y;transition:transform .2s ease}
 .swdel{position:absolute;right:0;top:0;bottom:0;width:88px;border:0;border-radius:14px;background:var(--berry);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 12px Inter,sans-serif;box-shadow:none;padding:0}
@@ -512,13 +522,17 @@ body.out #authBg{display:block}
   <label class="fab" id="fabLbl"><input type="file" id="fabFile" accept="image/*" capture="environment"><svg class="" aria-hidden="true"><use href="#u-cam"/></svg></label>
   <a href="#ajustes" data-t="ajustes"><svg class="" aria-hidden="true"><use href="#u-set"/></svg><span data-i="tabSet"></span></a>
 </nav>
-<div class="sheet" id="daySheet" hidden>
+<div class="sheet full" id="daySheet" hidden>
   <div class="sbox" role="dialog" aria-modal="true" aria-labelledby="dayTitle">
-    <div class="grab"></div>
-    <div class="shd" id="dayHead" style="grid-template-columns:minmax(0,1fr) auto"></div>
+    <div class="dtop"><div class="grab"></div><button type="button" class="dx" id="dayClose"><svg aria-hidden="true"><use href="#u-x"/></svg></button></div>
+    <h3 class="dtitle" id="dayTitle"></h3>
+    <div class="dots" id="dayDots" aria-hidden="true"></div>
+    <div class="dring"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="85" fill="none" stroke="var(--line)" stroke-width="13"/><g transform="rotate(-90 100 100)" fill="none" stroke-width="13"><circle class="arcs" id="dArcP" cx="100" cy="100" r="85" stroke="var(--mp)" stroke-dasharray="0 999"/><circle class="arcs" id="dArcC" cx="100" cy="100" r="85" stroke="var(--mc)" stroke-dasharray="0 999"/><circle class="arcs" id="dArcF" cx="100" cy="100" r="85" stroke="var(--mf)" stroke-dasharray="0 999"/></g></svg>
+      <div class="dc"><b id="dK">0</b><small id="dOf"></small></div></div>
+    <p class="dsub" id="dSub"></p>
     <div class="smac" id="dayMac"></div>
     <div id="dayMeals"></div>
-    <div class="sact dnav"><button type="button" class="x nb" id="dayPrev"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#u-chev"/></svg></button><button id="dayClose" data-i="close"></button><button type="button" class="x nb" id="dayNext"><svg aria-hidden="true"><use href="#u-chev"/></svg></button></div>
+    <p class="dhint" id="dHint"></p>
   </div>
 </div>
 <div class="sheet" id="sheet" hidden>
@@ -647,7 +661,7 @@ const EXTRA6={"en": {"qrShow": "QR code", "qrHide": "Hide QR code", "noMeals": "
 Object.keys(EXTRA6).forEach(k=>Object.assign(L[k],EXTRA6[k]));
 const EXTRA7={"en": {"scanHint2": "Opens the camera and reads the code automatically.", "usePhoto": "Use a photo instead", "scanLive": "Point the camera at the barcode", "camDenied": "Couldn't open the camera. Allow camera access in your browser settings, or use a photo."}, "es": {"scanHint2": "Abre la cámara y lee el código automáticamente.", "usePhoto": "Usar una foto", "scanLive": "Apunta la cámara al código de barras", "camDenied": "No pude abrir la cámara. Permite el acceso a la cámara en los ajustes del navegador o usa una foto."}, "ja": {"scanHint2": "カメラが開いて自動でコードを読み取ります。", "usePhoto": "写真を使う", "scanLive": "バーコードにカメラを向けてください", "camDenied": "カメラを開けませんでした。ブラウザ設定でカメラへのアクセスを許可するか、写真を使ってください。"}};
 Object.keys(EXTRA7).forEach(k=>Object.assign(L[k],EXTRA7[k]));
-const EXTRA8={en:{prevDay:'Previous day',nextDay:'Next day'},es:{prevDay:'Día anterior',nextDay:'Día siguiente'},ja:{prevDay:'前の日',nextDay:'次の日'}};Object.keys(EXTRA8).forEach(k=>Object.assign(L[k],EXTRA8[k]));
+const EXTRA8={en:{swipeHint:'Swipe sideways to change day · down to close'},es:{swipeHint:'Desliza a los lados para cambiar de día · hacia abajo para cerrar'},ja:{swipeHint:'左右にスワイプで日を切り替え・下にスワイプで閉じる'}};Object.keys(EXTRA8).forEach(k=>Object.assign(L[k],EXTRA8[k]));
 const EXTRA3={"en": {"foods": "Foods", "saveChanges": "Save changes", "delMeal": "Delete meal", "close": "Close", "updated": "Meal updated", "details": "Details", "confDel": "Delete this meal?"}, "es": {"foods": "Alimentos", "saveChanges": "Guardar cambios", "delMeal": "Borrar comida", "close": "Cerrar", "updated": "Comida actualizada", "details": "Detalles", "confDel": "¿Borrar esta comida?"}, "ja": {"foods": "食品", "saveChanges": "変更を保存", "delMeal": "食事を削除", "close": "閉じる", "updated": "更新しました", "details": "詳細", "confDel": "この食事を削除しますか？"}};
 Object.keys(EXTRA3).forEach(k=>Object.assign(L[k],EXTRA3[k]));
 Object.keys(EXTRA2).forEach(k=>{Object.assign(L[k],EXTRA2[k]);L[k].err=Object.assign({},L[k].err,ERRX[k])});
@@ -718,8 +732,8 @@ document.querySelectorAll('.langSeg button').forEach(b=>b.onclick=()=>{
 });
 
 /* ---------- render ---------- */
-function setArcs(kp,kc,kf,len){
-  const C=2*Math.PI*85, tot=kp+kc+kf, ids=['arcP','arcC','arcF'], v=[kp,kc,kf];
+function setArcs(kp,kc,kf,len,ids=['arcP','arcC','arcF']){
+  const C=2*Math.PI*85, tot=kp+kc+kf, v=[kp,kc,kf];
   const n=v.filter(a=>a>0).length, gap=n>1&&len>12?2:0;
   let start=0;
   ids.forEach((id,i)=>{const el=$(id);const seg=tot>0?len*v[i]/tot:0;const d=Math.max(0,seg-gap);
@@ -969,7 +983,11 @@ function renderDay(){
   const tot=dayTot(ms), c=calc(profile()), [y,mo,da]=k.split('-').map(Number), d=new Date(y,mo-1,da);
   const title=k===TODAY?t('tabHoy'):d.toLocaleDateString(LOC[S.lang],{weekday:'long',day:'numeric',month:'long'});
   const sub=c?(tot.k>c.meta?t('over',{n:fmt(tot.k-c.meta)}):`${t('target')}: ${fmt(c.meta)} kcal`):'';
-  $('dayHead').innerHTML=`<div><h3 id="dayTitle">${esc(title)}</h3><div class="muted">${esc(sub)}</div></div><div class="tk">${fmt(tot.k)}<small>kcal</small></div>`;
+  $('dayTitle').textContent=title;$('dK').textContent=fmt(tot.k);
+  $('dOf').textContent=c?t('of',{n:fmt(c.meta)}):'kcal';
+  const over=!!(c&&tot.k>c.meta);$('dSub').textContent=c?(over?t('over',{n:fmt(tot.k-c.meta)}):t('left',{n:fmt(c.meta-tot.k)})):'';$('dSub').classList.toggle('over',over);
+  setArcs(tot.p*4,tot.c*4,tot.f*9,(c?Math.min(1,tot.k/c.meta):(tot.k?1:0))*2*Math.PI*85,['dArcP','dArcC','dArcF']);
+  $('dayClose').setAttribute('aria-label',t('close'));$('dHint').textContent=t('swipeHint');
   $('dayMac').innerHTML=[['i-p',tot.p],['i-c',tot.c],['i-f',tot.f]].map(([ic,v],i)=>`<div class="m${i}">${IC(ic)}<div><span>${esc(T().mac[i])}</span><b>${r0(v)} g</b></div></div>`).join('');
   $('dayMeals').innerHTML=ms.length?ms.map(m=>`<div class="dmeal" data-m="${m.id}" role="button" tabindex="0" style="--c:${MCOL[m.tipo]||MCOL.l}">
       ${m.thumb?`<img class="th" src="${esc(m.thumb)}" alt="">`:`<div class="th" style="display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,var(--card))">${IC('i-'+(MEALK.includes(m.tipo)?m.tipo:'l'))}</div>`}
@@ -1021,14 +1039,12 @@ function swipeClose(sheetId,close,onH){
 }
 swipeClose('daySheet',closeDay,dir=>shiftDay(dir));swipeClose('sheet',closeSheet);
 function dayAdd(k,n){const [y,m,d]=k.split('-').map(Number);return dkey(new Date(y,m-1,d+n))}
-function updDayNav(){const k=S.dayK;if(!k)return;$('dayPrev').setAttribute('aria-label',t('prevDay'));$('dayNext').setAttribute('aria-label',t('nextDay'));$('dayPrev').disabled=k<=dayAdd(TODAY,-6);$('dayNext').disabled=k>=TODAY}
+function updDayNav(){const k=S.dayK;if(!k)return;let h='';for(let i=-6;i<=0;i++)h+=`<i class="${dayAdd(TODAY,i)===k?'on':''}"></i>`;$('dayDots').innerHTML=h}
 function shiftDay(dir){
   const k=S.dayK;if(!k)return false;const n=dayAdd(k,dir);
   if(n>TODAY||n<dayAdd(TODAY,-6))return false;
   S.dayK=n;renderDay();updDayNav();document.querySelector('#daySheet .sbox').scrollTop=0;return true;
 }
-$('dayPrev').onclick=()=>{const b=document.querySelector('#daySheet .sbox');if(shiftDay(-1))slideIn(b,-1)};
-$('dayNext').onclick=()=>{const b=document.querySelector('#daySheet .sbox');if(shiftDay(1))slideIn(b,1)};
 function slideIn(box,dir){box.style.transition='none';box.style.transform=`translateX(${dir*40}px)`;box.style.opacity='.4';
   requestAnimationFrame(()=>requestAnimationFrame(()=>{box.style.transition='transform .22s ease,opacity .22s ease';box.style.transform='';box.style.opacity=''}))}
 /* swipe left on a meal to reveal Delete */
