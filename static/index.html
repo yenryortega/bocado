@@ -377,7 +377,7 @@ body.out #authBg{display:block}
     </div>
     <div class="card" id="p-photo">
       <div class="drop" id="drop"><div id="dropTxt"><div class="dpics"><svg class="" aria-hidden="true"><use href="#i-b"/></svg><svg class="" aria-hidden="true"><use href="#i-l"/></svg><svg class="" aria-hidden="true"><use href="#i-s"/></svg></div><b data-i="tapPhoto"></b><br><span class="muted" data-i="orGallery"></span></div>
-        <input type="file" id="file" accept="image/*" capture="environment"></div>
+        <input type="file" id="file" accept="image/*"></div>
       <div style="margin-top:14px"><label for="desc" data-i="descLbl"></label><textarea id="desc" rows="2"></textarea></div>
       <div class="row"><button class="acc" id="analyze" data-i="calc"></button><button id="cancel" hidden data-i="cancel"></button><button class="linkbtn" id="manualBtn" data-i="manual"></button></div>
       <p class="note" id="status"></p>
@@ -390,7 +390,7 @@ body.out #authBg{display:block}
       <p class="note"><span data-i="foodsNote"></span> <button class="linkbtn" id="manualBtn2" style="display:inline;margin:0" data-i="manual"></button></p>
     </div>
     <div class="card" id="p-barcode" hidden>
-      <label class="scanbtn"><input type="file" id="bcFile" accept="image/*" capture="environment"><svg aria-hidden="true"><use href="#u-barcode"/></svg><b data-i="scanBtn"></b><span class="muted" data-i="scanHint"></span></label>
+      <label class="scanbtn"><input type="file" id="bcFile" accept="image/*"><svg aria-hidden="true"><use href="#u-barcode"/></svg><b data-i="scanBtn"></b><span class="muted" data-i="scanHint"></span></label>
       <div class="row"><input id="code" inputmode="numeric" maxlength="14" style="flex:1"><button id="lookup" data-i="lookup"></button></div>
       <p class="note" id="bcStatus"></p>
       <p class="note">Open Food Facts</p>
@@ -519,7 +519,7 @@ noProfSub:'Con edad, peso, estatura y actividad calculo cuántas calorías neces
 welcome:'Tus calorías, con una foto',welcomeSub:'Inicia sesión para ver tu meta y tus comidas.',
 mealsToday:'Comidas de hoy',addDish:'+ Añadir plato',empty:'Aún no has registrado nada hoy.<br>Haz una foto a tu próximo plato.',last7:'Últimos 7 días',
 weekNote:'Barra coral: día por encima de tu meta. Importa la tendencia, no un día suelto.',del:'Borrar',photo:'Foto del plato',tapPhoto:'Toca para hacer una foto',
-orGallery:'o elegir una de la galería',descLbl:'Descripción o detalles (opcional)',descPh:'Ej.: con 1 cucharada de aceite; o sin foto: 2 onigiri de atún y sopa de miso',
+orGallery:'Cámara o galería de fotos',descLbl:'Descripción o detalles (opcional)',descPh:'Ej.: con 1 cucharada de aceite; o sin foto: 2 onigiri de atún y sopa de miso',
 calc:'Calcular calorías',cancel:'Cancelar',manual:'o añadir a mano',analyzing:'Analizando el plato… (10–40 s)',result:'Resultado',fixGrams:'Ajusta los gramos o las kcal de cualquier alimento. ¿Falta algo? Búscalo abajo.',
 thFood:'Alimento',thG:'Gramos',total:'Total',addFood:'+ Añadir alimento',meal:'Comida',meals:['Desayuno','Almuerzo','Merienda','Cena','Snack'],saveToday:'Guardar en hoy',
 conf:'Confianza: {c}. {n} Estimación de IA: un margen de ±20–30 % es normal; una báscula de cocina lo hace exacto.',notFood:'No encontré comida en la imagen.',
@@ -545,7 +545,7 @@ noProfSub:'From age, weight, height and activity I work out how many calories yo
 welcome:'Your calories, from a photo',welcomeSub:'Sign in to see your target and meals.',
 mealsToday:'Today’s meals',addDish:'+ Add a dish',empty:'Nothing logged today yet.<br>Snap your next dish.',last7:'Last 7 days',
 weekNote:'Coral bar: a day above your target. The trend matters, not a single day.',del:'Delete',photo:'Dish photo',tapPhoto:'Tap to take a photo',
-orGallery:'or choose one from your gallery',descLbl:'Description or details (optional)',descPh:'E.g. with 1 tbsp of oil; or without a photo: 2 tuna onigiri and miso soup',
+orGallery:'Camera or photo library',descLbl:'Description or details (optional)',descPh:'E.g. with 1 tbsp of oil; or without a photo: 2 tuna onigiri and miso soup',
 calc:'Work out calories',cancel:'Cancel',manual:'or add by hand',analyzing:'Analysing the dish… (10–40 s)',result:'Result',fixGrams:'Adjust the grams or the kcal of any food if needed. Missing something? Search it below.',
 thFood:'Food',thG:'Grams',total:'Total',addFood:'+ Add food',meal:'Meal',meals:['Breakfast','Lunch','Afternoon snack','Dinner','Snack'],saveToday:'Save to today',
 conf:'Confidence: {c}. {n} AI estimate: ±20–30% is normal; a kitchen scale makes it exact.',notFood:'I couldn’t find food in the image.',
@@ -571,7 +571,7 @@ noProfSub:'年齢・体重・身長・活動量から1日に必要なカロリ�
 welcome:'写真でカロリー管理',welcomeSub:'ログインして目標と食事を確認しましょう。',
 mealsToday:'今日の食事',addDish:'+ 料理を追加',empty:'今日はまだ記録がありません。<br>次の料理を撮ってみましょう。',last7:'過去7日間',
 weekNote:'コーラル：目標を超えた日。大切なのは1日ではなく傾向です。',del:'削除',photo:'料理の写真',tapPhoto:'タップして撮影',
-orGallery:'またはギャラリーから選択',descLbl:'説明・補足（任意）',descPh:'例：油大さじ1使用／写真なし：ツナおにぎり2個と味噌汁',
+orGallery:'カメラまたは写真ライブラリ',descLbl:'説明・補足（任意）',descPh:'例：油大さじ1使用／写真なし：ツナおにぎり2個と味噌汁',
 calc:'カロリーを計算',cancel:'キャンセル',manual:'または手動で追加',analyzing:'料理を分析中…（10〜40秒）',result:'結果',fixGrams:'必要に応じてグラムやkcalを修正できます。足りない食品は下で検索して追加。',
 thFood:'食品',thG:'グラム',total:'合計',addFood:'+ 食品を追加',meal:'食事',meals:['朝食','昼食','おやつ','夕食','間食'],saveToday:'今日に保存',
 conf:'信頼度：{c}。{n} AIの推定は±20〜30%が普通です。キッチンスケールなら正確です。',notFood:'画像に食べ物が見つかりませんでした。',
@@ -593,11 +593,11 @@ confDay:'今日の食事をすべて削除しますか？',confAll:'プロフィ
 loadErr:'データを読み込めませんでした。接続を確認して再読み込みしてください。',days:['日','月','火','水','木','金','土']}};
 const EXTRA={
 es:{authTag:'Haz una foto a tu plato y descubre sus calorías. Llega a tu meta diaria sin hacer cuentas.',streak1:'1 día',streakN:'{n} días seguidos',streak0:'Empieza tu racha hoy',slotAdd:'Añadir a {m}',snap:'Hacer foto del plato',goal:'Objetivo',targetLbl:'meta',
-savedLeft:'Guardado · te quedan {n} kcal',savedOver:'Guardado · {n} kcal por encima',tapPhoto:'Haz una foto del plato',retry:'Volver a calcular'},
+savedLeft:'Guardado · te quedan {n} kcal',savedOver:'Guardado · {n} kcal por encima',tapPhoto:'Haz una foto o elige una',retry:'Volver a calcular'},
 en:{authTag:'Snap your plate and see its calories. Hit your daily target without doing the maths.',streak1:'1 day',streakN:'{n}-day streak',streak0:'Start your streak today',slotAdd:'Add to {m}',snap:'Snap your dish',targetLbl:'target',
-savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'Snap a photo of your dish',retry:'Work it out again'},
+savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'Take a photo or pick one',retry:'Work it out again'},
 ja:{authTag:'料理を撮るだけでカロリーがわかる。計算なしで毎日の目標を達成。',streak1:'1日',streakN:'{n}日連続',streak0:'今日から連続記録を',slotAdd:'{m}に追加',snap:'料理を撮影',targetLbl:'目標',
-savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'料理を撮影',retry:'もう一度計算'}};
+savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'撮影または写真を選択',retry:'もう一度計算'}};
 Object.keys(EXTRA).forEach(k=>Object.assign(L[k],EXTRA[k]));
 const EXTRA2={"en": {"modePhoto": "Photo", "modeSearch": "Search", "modeBarcode": "Barcode", "modeFav": "Favorites", "searchPh": "Rice, chicken, banana…", "searchEmpty": "No matches. Add it by hand.", "foodsNote": "Approximate values from standard food tables.", "addTo": "Add", "scanBtn": "Scan a barcode", "scanHint": "Take a clear photo of the barcode on the package.", "codePh": "Or type the number", "lookup": "Look up", "scanning": "Reading barcode…", "noCode": "Couldn't read the barcode. Try a sharper photo or type the number.", "favs": "Favorites", "recents": "Recent", "noFavs": "Save a meal as a favorite to add it in one tap.", "noRecents": "Your recent meals will show up here.", "saveFav": "Save as favorite", "favName": "Favorite name", "favSaveBtn": "Save", "favSaved": "Saved to favorites", "added": "Added: {n}", "myMeal": "Your meal", "theme": "Theme", "thAuto": "Auto", "thLight": "Light", "thDark": "Dark"}, "es": {"modePhoto": "Foto", "modeSearch": "Buscar", "modeBarcode": "Código", "modeFav": "Favoritos", "searchPh": "Arroz, pollo, plátano…", "searchEmpty": "Sin resultados. Añádelo a mano.", "foodsNote": "Valores aproximados de tablas de composición.", "addTo": "Añadir", "scanBtn": "Escanear código de barras", "scanHint": "Haz una foto nítida del código del envase.", "codePh": "O escribe el número", "lookup": "Buscar", "scanning": "Leyendo código…", "noCode": "No pude leer el código. Prueba con otra foto o escribe el número.", "favs": "Favoritos", "recents": "Recientes", "noFavs": "Guarda una comida como favorita para añadirla con un toque.", "noRecents": "Aquí aparecerán tus comidas recientes.", "saveFav": "Guardar como favorito", "favName": "Nombre del favorito", "favSaveBtn": "Guardar", "favSaved": "Guardado en favoritos", "added": "Añadido: {n}", "myMeal": "Tu comida", "theme": "Tema", "thAuto": "Automático", "thLight": "Claro", "thDark": "Oscuro"}, "ja": {"modePhoto": "写真", "modeSearch": "検索", "modeBarcode": "バーコード", "modeFav": "お気に入り", "searchPh": "ごはん、鶏肉、バナナ…", "searchEmpty": "見つかりません。手動で追加してください。", "foodsNote": "食品成分表に基づくおおよその値です。", "addTo": "追加", "scanBtn": "バーコードを読み取る", "scanHint": "パッケージのバーコードをはっきり撮影してください。", "codePh": "または番号を入力", "lookup": "検索", "scanning": "読み取り中…", "noCode": "バーコードを読み取れませんでした。別の写真を試すか番号を入力してください。", "favs": "お気に入り", "recents": "最近", "noFavs": "食事をお気に入りに保存すると、ワンタップで追加できます。", "noRecents": "最近の食事がここに表示されます。", "saveFav": "お気に入りに保存", "favName": "お気に入りの名前", "favSaveBtn": "保存", "favSaved": "お気に入りに保存しました", "added": "追加しました：{n}", "myMeal": "あなたの食事", "theme": "テーマ", "thAuto": "自動", "thLight": "ライト", "thDark": "ダーク"}};
 const ERRX={"en": {"not_found": "Product not found in Open Food Facts.", "no_nutrition": "That product has no calorie data.", "lookup_failed": "Couldn't reach Open Food Facts. Try again.", "bad_code": "Enter a valid barcode number.", "ai_off": "Photo analysis is not set up.", "bad_fav": "Add at least one food first.", "too_many_favs": "You have too many favorites. Delete some first."}, "es": {"not_found": "Producto no encontrado en Open Food Facts.", "no_nutrition": "Ese producto no tiene datos de calorías.", "lookup_failed": "No pude conectar con Open Food Facts. Inténtalo de nuevo.", "bad_code": "Escribe un código de barras válido.", "ai_off": "El análisis de fotos no está configurado.", "bad_fav": "Añade al menos un alimento primero.", "too_many_favs": "Tienes demasiados favoritos. Borra alguno."}, "ja": {"not_found": "Open Food Factsに商品が見つかりません。", "no_nutrition": "この商品にはカロリー情報がありません。", "lookup_failed": "Open Food Factsに接続できません。もう一度お試しください。", "bad_code": "正しいバーコード番号を入力してください。", "ai_off": "写真分析は設定されていません。", "bad_fav": "まず食品を1つ以上追加してください。", "too_many_favs": "お気に入りが多すぎます。いくつか削除してください。"}};
