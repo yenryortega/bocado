@@ -996,8 +996,8 @@ function renderDay(){
     :`<p class="empty2" style="text-align:center;padding:20px 0">${esc(t('noMeals'))}</p>`;
 }
 $('wk').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b)openDay(b.dataset.day)});
-$('dayMeals').addEventListener('click',e=>{const r=e.target.closest('[data-m]');if(!r)return;const id=r.dataset.m;closeDay();openMeal(id)});
-$('dayMeals').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.m){e.preventDefault();const id=e.target.dataset.m;closeDay();openMeal(id)}});
+$('dayMeals').addEventListener('click',e=>{const r=e.target.closest('[data-m]');if(!r)return;const id=r.dataset.m;openMeal(id)});
+$('dayMeals').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.dataset.m){e.preventDefault();const id=e.target.dataset.m;openMeal(id)}});
 $('dayClose').onclick=closeDay;
 $('daySheet').addEventListener('click',e=>{if(e.target.id==='daySheet')closeDay()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('daySheet').hidden)closeDay()});
@@ -1007,11 +1007,11 @@ function openMeal(id){
   const f=findMeal(id);if(!f)return;const m=f.list.find(x=>String(x.id)===String(id));
   S.cur={id:m.id,tipo:m.tipo,hora:m.hora,thumb:m.thumb,items:m.items.map(i=>({...i})),orig:JSON.stringify({t:m.tipo,i:m.items})};
   S.delArm=false;$('shErr').textContent='';renderSheet();
-  $('sheet').hidden=false;lockScroll();document.querySelector('.sbox').scrollTop=0;$('shClose').focus({preventScroll:true});
+  $('sheet').hidden=false;lockScroll();document.querySelector('#sheet .sbox').scrollTop=0;$('shClose').focus({preventScroll:true});
 }
-function lockScroll(){S.scrollY=window.scrollY;const b=document.body.style;b.position='fixed';b.top=`-${S.scrollY}px`;b.left='0';b.right='0';b.width='100%';b.overflow='hidden'}
-function unlockScroll(){const b=document.body.style;b.position=b.top=b.left=b.right=b.width=b.overflow='';window.scrollTo(0,S.scrollY||0)}
-function closeSheet(){if($('sheet').hidden)return;$('sheet').hidden=true;unlockScroll();S.cur=null}
+function lockScroll(){if((S.lockN=(S.lockN||0)+1)>1)return;S.scrollY=window.scrollY;const b=document.body.style;b.position='fixed';b.top=`-${S.scrollY}px`;b.left='0';b.right='0';b.width='100%';b.overflow='hidden'}
+function unlockScroll(){S.lockN=Math.max(0,(S.lockN||0)-1);if(S.lockN)return;const b=document.body.style;b.position=b.top=b.left=b.right=b.width=b.overflow='';window.scrollTo(0,S.scrollY||0)}
+function closeSheet(){if($('sheet').hidden)return;$('sheet').hidden=true;unlockScroll();S.cur=null;if(!$('daySheet').hidden){renderDay();$('dayClose').focus({preventScroll:true})}}
 /* swipe down to close a bottom sheet */
 function swipeClose(sheetId,close,onH){
   const box=document.querySelector('#'+sheetId+' .sbox');let y0=null,x0=0,dy=0,dx=0,t0=0,drag=false,hor=false;
@@ -1118,7 +1118,7 @@ $('shDel').onclick=async()=>{
 $('shClose').onclick=closeSheet;
 $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&!$('sheet').hidden)closeSheet();
+  if(e.key==='Escape'){if(!$('sheet').hidden)closeSheet();else if(!$('daySheet').hidden)closeDay()}
   if((e.key==='Enter'||e.key===' ')&&e.target.matches?.('.entry[data-open]')){e.preventDefault();openMeal(e.target.dataset.open)}
 });
 
