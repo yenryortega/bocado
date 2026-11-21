@@ -1462,10 +1462,10 @@ function hideSplash(){const sp=document.getElementById('splash');if(!sp)return;s
   if(S.me){setArcs(0,0,0,0);setTimeout(renderTop,120)}setTimeout(()=>sp.remove(),450)}
 (async()=>{
   const t0=performance.now();requestAnimationFrame(()=>splashP(18));
-  let ok=false;
-  try{const me=await api('/api/me');splashP(55);await enter(me);splashP(100);ok=true}
-  catch(e){if(e.code!=='auth')showAuth()}
-  if(ok&&document.documentElement.classList.contains('pwa'))await wait(Math.max(350,1000-(performance.now()-t0)));
+  try{const me=await api('/api/me');splashP(55);await enter(me)}
+  catch(e){if(e.code!=='auth')showAuth();splashP(60);await wait(60)}
+  splashP(100);
+  if(document.documentElement.classList.contains('pwa'))await wait(Math.max(450,1000-(performance.now()-t0)));
   hideSplash();
 })();
 }
