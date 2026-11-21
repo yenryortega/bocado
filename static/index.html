@@ -22,7 +22,7 @@
    LAYOUT: band (plate, macros) → meal slots → week; floating tab bar with camera button in the middle */
 :root{color-scheme:light dark;
 --bg:light-dark(#f3faf5,#0f1713);--card:light-dark(#ffffff,#18221c);--ink:light-dark(#14261c,#eaf5ee);--mute:light-dark(#5f7568,#9fb3a7);
---line:light-dark(#dcefe3,#26352c);--org:light-dark(#22a565,#2fb873);--orgd:light-dark(#178a52,#1f8f57);--sun:#ffc93c;--leaf:#3bb273;--berry:#ff7a59;--sky:#5b8def;
+--line:light-dark(#dcefe3,#26352c);--org:light-dark(#22a565,#2fb873);--orgd:light-dark(#178a52,#1f8f57);--sun:#ffc93c;--leaf:#3bb273;--berry:#ff7a59;--mp:#ff7a59;--mc:#ffc93c;--mf:#5ba8f5;--sky:#5b8def;
 --band:linear-gradient(155deg,#3cc983 0%,#22a565 52%,#14917a 100%);
 --bad:light-dark(#c2283c,#ff8a96);--sh:light-dark(0 2px 0 rgba(30,120,70,.08),0 0 0 1px rgba(255,255,255,.04));--sh2:light-dark(0 10px 30px rgba(20,110,60,.18),0 8px 30px rgba(0,0,0,.55))}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
@@ -66,6 +66,11 @@ body.out .pics{display:flex}body.out .pc .big,body.out .pc small{display:none}
 .mt .bar{grid-column:1/-1;margin-top:8px}
 .bar{height:7px;border-radius:4px;background:rgba(255,255,255,.3);overflow:hidden}
 .bar i{display:block;height:100%;background:#fff;border-radius:4px;transition:width .6s ease}
+.mt.m0 .bar i{background:var(--mp)}.mt.m1 .bar i{background:var(--mc)}.mt.m2 .bar i{background:var(--mf)}
+.mt .bar{background:rgba(255,255,255,.4)}
+.arcs{transition:stroke-dasharray .6s ease,stroke-dashoffset .6s ease}
+.smac>div.m0{box-shadow:inset 3px 0 0 var(--mp)}.smac>div.m1{box-shadow:inset 3px 0 0 var(--mc)}.smac>div.m2{box-shadow:inset 3px 0 0 var(--mf)}
+.upl{display:flex;justify-content:center;margin-top:10px}
 body.compact .hero{display:none}
 body.compact .band{padding-bottom:18px}
 body.out .mac,body.out .tabbar,body.out .chip{display:none}
@@ -334,7 +339,7 @@ body.out #authBg{display:block}
           <circle cx="100" cy="100" r="94" fill="#fff"/>
           <circle cx="100" cy="100" r="76" fill="var(--card)" stroke="rgba(0,0,0,.05)" stroke-width="2"/>
           <circle cx="100" cy="100" r="85" fill="none" stroke="#d6f2e2" stroke-width="11"/>
-          <circle id="arc" cx="100" cy="100" r="85" fill="none" stroke="var(--org)" stroke-width="11" stroke-linecap="round" transform="rotate(-90 100 100)" stroke-dasharray="0 999"/>
+          <g transform="rotate(-90 100 100)" fill="none" stroke-width="11"><circle class="arcs" id="arcP" cx="100" cy="100" r="85" stroke="var(--mp)" stroke-dasharray="0 999"/><circle class="arcs" id="arcC" cx="100" cy="100" r="85" stroke="var(--mc)" stroke-dasharray="0 999"/><circle class="arcs" id="arcF" cx="100" cy="100" r="85" stroke="var(--mf)" stroke-dasharray="0 999"/></g>
         </svg>
         <div class="pc"><div class="pics"><svg class="" aria-hidden="true"><use href="#i-p"/></svg><svg class="" aria-hidden="true"><use href="#i-s"/></svg><svg class="" aria-hidden="true"><use href="#i-c"/></svg></div><span class="big" id="eaten">0</span><small id="ofk"></small></div>
       </div>
@@ -389,7 +394,8 @@ body.out #authBg{display:block}
     </div>
     <div class="card" id="p-photo">
       <div class="drop" id="drop"><div id="dropTxt"><div class="dpics"><svg class="" aria-hidden="true"><use href="#i-b"/></svg><svg class="" aria-hidden="true"><use href="#i-l"/></svg><svg class="" aria-hidden="true"><use href="#i-s"/></svg></div><b data-i="tapPhoto"></b><br><span class="muted" data-i="orGallery"></span></div>
-        <input type="file" id="file" accept="image/*"></div>
+        <input type="file" id="file" accept="image/*" capture="environment"></div>
+      <div class="upl"><label class="x pick"><input type="file" id="upFile" accept="image/*"><svg aria-hidden="true" style="width:18px;height:18px"><use href="#u-plus"/></svg><span data-i="uploadPhoto"></span></label></div>
       <div style="margin-top:14px"><label for="desc" data-i="descLbl"></label><textarea id="desc" rows="2"></textarea></div>
       <div class="row"><button class="acc" id="analyze" data-i="calc"></button><button id="cancel" hidden data-i="cancel"></button><button class="linkbtn" id="manualBtn" data-i="manual"></button></div>
       <p class="note" id="status"></p>
@@ -612,11 +618,11 @@ confDay:'今日の食事をすべて削除しますか？',confAll:'プロフィ
 loadErr:'データを読み込めませんでした。接続を確認して再読み込みしてください。',days:['日','月','火','水','木','金','土']}};
 const EXTRA={
 es:{authTag:'Haz una foto a tu plato y descubre sus calorías. Llega a tu meta diaria sin hacer cuentas.',streak1:'1 día',streakN:'{n} días seguidos',streak0:'Empieza tu racha hoy',slotAdd:'Añadir a {m}',snap:'Hacer foto del plato',goal:'Objetivo',targetLbl:'meta',
-savedLeft:'Guardado · te quedan {n} kcal',savedOver:'Guardado · {n} kcal por encima',tapPhoto:'Haz una foto o elige una',retry:'Volver a calcular'},
+savedLeft:'Guardado · te quedan {n} kcal',savedOver:'Guardado · {n} kcal por encima',tapPhoto:'Toca para hacer una foto',orGallery:'Se abre la cámara',uploadPhoto:'Subir una foto',retry:'Volver a calcular'},
 en:{authTag:'Snap your plate and see its calories. Hit your daily target without doing the maths.',streak1:'1 day',streakN:'{n}-day streak',streak0:'Start your streak today',slotAdd:'Add to {m}',snap:'Snap your dish',targetLbl:'target',
-savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'Take a photo or pick one',retry:'Work it out again'},
+savedLeft:'Saved · {n} kcal left',savedOver:'Saved · {n} kcal over',tapPhoto:'Tap to take a photo',orGallery:'Opens the camera',uploadPhoto:'Upload a photo',retry:'Work it out again'},
 ja:{authTag:'料理を撮るだけでカロリーがわかる。計算なしで毎日の目標を達成。',streak1:'1日',streakN:'{n}日連続',streak0:'今日から連続記録を',slotAdd:'{m}に追加',snap:'料理を撮影',targetLbl:'目標',
-savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'撮影または写真を選択',retry:'もう一度計算'}};
+savedLeft:'保存しました・あと {n} kcal',savedOver:'保存しました・{n} kcal オーバー',tapPhoto:'タップして撮影',orGallery:'カメラが起動します',uploadPhoto:'写真をアップロード',retry:'もう一度計算'}};
 Object.keys(EXTRA).forEach(k=>Object.assign(L[k],EXTRA[k]));
 const EXTRA2={"en": {"modePhoto": "Photo", "modeSearch": "Search", "modeBarcode": "Barcode", "modeFav": "Favorites", "searchPh": "Rice, chicken, banana…", "searchEmpty": "No matches. Add it by hand.", "foodsNote": "Approximate values from standard food tables.", "addTo": "Add", "scanBtn": "Scan a barcode", "scanHint": "Take a clear photo of the barcode on the package.", "codePh": "Or type the number", "lookup": "Look up", "scanning": "Reading barcode…", "noCode": "Couldn't read the barcode. Try a sharper photo or type the number.", "favs": "Favorites", "recents": "Recent", "noFavs": "Save a meal as a favorite to add it in one tap.", "noRecents": "Your recent meals will show up here.", "saveFav": "Save as favorite", "favName": "Favorite name", "favSaveBtn": "Save", "favSaved": "Saved to favorites", "added": "Added: {n}", "myMeal": "Your meal", "theme": "Theme", "thAuto": "Auto", "thLight": "Light", "thDark": "Dark"}, "es": {"modePhoto": "Foto", "modeSearch": "Buscar", "modeBarcode": "Código", "modeFav": "Favoritos", "searchPh": "Arroz, pollo, plátano…", "searchEmpty": "Sin resultados. Añádelo a mano.", "foodsNote": "Valores aproximados de tablas de composición.", "addTo": "Añadir", "scanBtn": "Escanear código de barras", "scanHint": "Haz una foto nítida del código del envase.", "codePh": "O escribe el número", "lookup": "Buscar", "scanning": "Leyendo código…", "noCode": "No pude leer el código. Prueba con otra foto o escribe el número.", "favs": "Favoritos", "recents": "Recientes", "noFavs": "Guarda una comida como favorita para añadirla con un toque.", "noRecents": "Aquí aparecerán tus comidas recientes.", "saveFav": "Guardar como favorito", "favName": "Nombre del favorito", "favSaveBtn": "Guardar", "favSaved": "Guardado en favoritos", "added": "Añadido: {n}", "myMeal": "Tu comida", "theme": "Tema", "thAuto": "Automático", "thLight": "Claro", "thDark": "Oscuro"}, "ja": {"modePhoto": "写真", "modeSearch": "検索", "modeBarcode": "バーコード", "modeFav": "お気に入り", "searchPh": "ごはん、鶏肉、バナナ…", "searchEmpty": "見つかりません。手動で追加してください。", "foodsNote": "食品成分表に基づくおおよその値です。", "addTo": "追加", "scanBtn": "バーコードを読み取る", "scanHint": "パッケージのバーコードをはっきり撮影してください。", "codePh": "または番号を入力", "lookup": "検索", "scanning": "読み取り中…", "noCode": "バーコードを読み取れませんでした。別の写真を試すか番号を入力してください。", "favs": "お気に入り", "recents": "最近", "noFavs": "食事をお気に入りに保存すると、ワンタップで追加できます。", "noRecents": "最近の食事がここに表示されます。", "saveFav": "お気に入りに保存", "favName": "お気に入りの名前", "favSaveBtn": "保存", "favSaved": "お気に入りに保存しました", "added": "追加しました：{n}", "myMeal": "あなたの食事", "theme": "テーマ", "thAuto": "自動", "thLight": "ライト", "thDark": "ダーク"}};
 const ERRX={"en": {"not_found": "Product not found in Open Food Facts.", "no_nutrition": "That product has no calorie data.", "lookup_failed": "Couldn't reach Open Food Facts. Try again.", "bad_code": "Enter a valid barcode number.", "ai_off": "Photo analysis is not set up.", "bad_fav": "Add at least one food first.", "too_many_favs": "You have too many favorites. Delete some first."}, "es": {"not_found": "Producto no encontrado en Open Food Facts.", "no_nutrition": "Ese producto no tiene datos de calorías.", "lookup_failed": "No pude conectar con Open Food Facts. Inténtalo de nuevo.", "bad_code": "Escribe un código de barras válido.", "ai_off": "El análisis de fotos no está configurado.", "bad_fav": "Añade al menos un alimento primero.", "too_many_favs": "Tienes demasiados favoritos. Borra alguno."}, "ja": {"not_found": "Open Food Factsに商品が見つかりません。", "no_nutrition": "この商品にはカロリー情報がありません。", "lookup_failed": "Open Food Factsに接続できません。もう一度お試しください。", "bad_code": "正しいバーコード番号を入力してください。", "ai_off": "写真分析は設定されていません。", "bad_fav": "まず食品を1つ以上追加してください。", "too_many_favs": "お気に入りが多すぎます。いくつか削除してください。"}};
@@ -698,19 +704,25 @@ document.querySelectorAll('.langSeg button').forEach(b=>b.onclick=()=>{
 });
 
 /* ---------- render ---------- */
+function setArcs(kp,kc,kf,len){
+  const C=2*Math.PI*85, tot=kp+kc+kf, ids=['arcP','arcC','arcF'], v=[kp,kc,kf];
+  const n=v.filter(a=>a>0).length, gap=n>1&&len>12?2:0;
+  let start=0;
+  ids.forEach((id,i)=>{const el=$(id);const seg=tot>0?len*v[i]/tot:0;const d=Math.max(0,seg-gap);
+    el.setAttribute('stroke-dasharray',`${d.toFixed(1)} ${C.toFixed(1)}`);el.setAttribute('stroke-dashoffset',(-start).toFixed(1));start+=seg});
+}
 function renderTop(){
-  if(!S.me){$('eaten').textContent='0';$('headline').textContent=t('welcome');$('sub').textContent=t('welcomeSub');$('mac').innerHTML='';return}
+  if(!S.me){setArcs(0,0,0,0);$('eaten').textContent='0';$('headline').textContent=t('welcome');$('sub').textContent=t('welcomeSub');$('mac').innerHTML='';return}
   const c=calc(profile()), x=dayTot(S.day.meals), C=2*Math.PI*85;
   $('eaten').textContent=fmt(x.k);
-  if(!c){$('ofk').textContent=t('eatenToday');$('arc').setAttribute('stroke-dasharray','0 999');$('mac').innerHTML='';$('headline').textContent=t('noProf');$('sub').textContent=t('noProfSub');return}
+  if(!c){$('ofk').textContent=t('eatenToday');setArcs(0,0,0,0);$('mac').innerHTML='';$('headline').textContent=t('noProf');$('sub').textContent=t('noProfSub');return}
   const pct=Math.min(1,x.k/c.meta), left=c.meta-x.k;
-  $('arc').setAttribute('stroke-dasharray',`${(pct*C).toFixed(1)} ${C}`);
-  $('arc').setAttribute('stroke',x.k>c.meta?'var(--berry)':'var(--org)');
+  setArcs(x.p*4,x.c*4,x.f*9,pct*C);
   $('ofk').textContent=t('of',{n:fmt(c.meta)});
   $('headline').textContent=left>=0?t('left',{n:fmt(left)}):t('over',{n:fmt(-left)});
   $('sub').textContent=left>=0?t('subLeft'):t('subOver');
   const M=[[x.p,c.prot],[x.c,c.carb],[x.f,c.grasa]];
-  $('mac').innerHTML=M.map(([v,g],i)=>`<div class="mt">${IC(['i-p','i-c','i-f'][i])}<span>${esc(T().mac[i])}</span><b>${r0(v)}<small> / ${r0(g)} g</small></b><div class="bar"><i style="width:${Math.min(100,v/g*100)}%"></i></div></div>`).join('');
+  $('mac').innerHTML=M.map(([v,g],i)=>`<div class="mt m${i}">${IC(['i-p','i-c','i-f'][i])}<span>${esc(T().mac[i])}</span><b>${r0(v)}<small> / ${r0(g)} g</small></b><div class="bar"><i style="width:${Math.min(100,v/g*100)}%"></i></div></div>`).join('');
 }
 function renderStreak(){
   const el=$('streak');el.hidden=!S.me;
@@ -876,6 +888,7 @@ function setPhoto(f){
   $('resImg').src=img.src;
 }
 $('file').onchange=e=>{const f=e.target.files[0];if(f)setPhoto(f)};
+$('upFile').onchange=e=>{const f=e.target.files[0];if(f)setPhoto(f);e.target.value=''};
 $('fabFile').onchange=e=>{
   const f=e.target.files[0];if(!f)return;
   resetAdd();S.mtype=defaultMeal();renderChips();setMode('photo');setPhoto(f);
@@ -941,7 +954,7 @@ function renderDay(){
   const title=k===TODAY?t('tabHoy'):d.toLocaleDateString(LOC[S.lang],{weekday:'long',day:'numeric',month:'long'});
   const sub=c?(tot.k>c.meta?t('over',{n:fmt(tot.k-c.meta)}):`${t('target')}: ${fmt(c.meta)} kcal`):'';
   $('dayHead').innerHTML=`<div><h3 id="dayTitle">${esc(title)}</h3><div class="muted">${esc(sub)}</div></div><div class="tk">${fmt(tot.k)}<small>kcal</small></div>`;
-  $('dayMac').innerHTML=[['i-p',tot.p],['i-c',tot.c],['i-f',tot.f]].map(([ic,v],i)=>`<div>${IC(ic)}<div><span>${esc(T().mac[i])}</span><b>${r0(v)} g</b></div></div>`).join('');
+  $('dayMac').innerHTML=[['i-p',tot.p],['i-c',tot.c],['i-f',tot.f]].map(([ic,v],i)=>`<div class="m${i}">${IC(ic)}<div><span>${esc(T().mac[i])}</span><b>${r0(v)} g</b></div></div>`).join('');
   $('dayMeals').innerHTML=ms.length?ms.map(m=>`<div class="dmeal" data-m="${m.id}" role="button" tabindex="0" style="--c:${MCOL[m.tipo]||MCOL.l}">
       ${m.thumb?`<img class="th" src="${esc(m.thumb)}" alt="">`:`<div class="th" style="display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,var(--card))">${IC('i-'+(MEALK.includes(m.tipo)?m.tipo:'l'))}</div>`}
       <div><b>${esc(mealName(m.tipo))}</b> <span class="muted">${esc(m.hora)}</span><div class="en">${esc(m.items.map(i=>i.n).join(', '))}</div></div>
@@ -972,7 +985,7 @@ function renderSheet(){
   $('shHead').innerHTML=`${c.thumb?`<img class="ph" src="${esc(c.thumb)}" alt="">`:`<div class="ph">${IC('i-'+(MEALK.includes(k)?k:'l'))}</div>`}
     <div><h3 id="shTitle">${esc(mealName(k))}</h3><div class="muted">${esc(c.hora)} · ${c.items.length} ${esc(t('foods').toLowerCase())}</div></div>
     <div class="tk">${fmt(tot.k)}<small>kcal</small></div>`;
-  $('shMac').innerHTML=[['i-p',tot.p],['i-c',tot.c],['i-f',tot.f]].map(([ic,v],i)=>`<div>${IC(ic)}<div><span>${esc(T().mac[i])}</span><b>${r0(v)} g</b></div></div>`).join('');
+  $('shMac').innerHTML=[['i-p',tot.p],['i-c',tot.c],['i-f',tot.f]].map(([ic,v],i)=>`<div class="m${i}">${IC(ic)}<div><span>${esc(T().mac[i])}</span><b>${r0(v)} g</b></div></div>`).join('');
   $('shItems').innerHTML=c.items.map((i,x)=>`<div class="sit"><div><b>${esc(i.n)}</b><small>${r0(i.k)} kcal/100 g · P ${r0(i.g*(i.p||0)/100)} · C ${r0(i.g*(i.c||0)/100)} · F ${r0(i.g*(i.f||0)/100)} g</small></div>
     <label class="gw"><input type="number" inputmode="numeric" min="0" data-sx="${x}" value="${i.g}" aria-label="${esc(t('thG'))}: ${esc(i.n)}">g</label>
     <label class="gw"><input type="number" inputmode="numeric" min="0" data-sk="${x}" value="${r0(itemK(i))}" aria-label="kcal: ${esc(i.n)}">kcal</label></div>`).join('');
